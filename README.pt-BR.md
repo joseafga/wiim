@@ -1,10 +1,10 @@
-#Wiim Industrial Information Management
+# Wiim Industrial Information Management
 *Read this in other languages: [English](README.md), [Português (BR)](README.pt-BR.md).*
 
-### Undergraduate Final Project
-Desktop server application.
+### Trabalho de Conclusão de Curso
+Aplicativo para desktop do servidor.
 
-### Requires:
+### Requerido:
 * pip install pyqt5
 * pip install opcua (*cryptography, dateutil, lxml and pytz)
 * pip install opcua-widgets
@@ -18,5 +18,5 @@ Desktop server application.
 * pip install qrcode
 * pip install Pillow (PIL dead?)
 
-## License
-`CC BY-NC 4.0` – [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/)
+## Licença
+`CC BY-NC 4.0` – [Atribuição-NãoComercial 4.0 Internacional](https://creativecommons.org/licenses/by-nc/4.0/deed.pt_BR)
