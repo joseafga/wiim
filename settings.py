@@ -4,8 +4,11 @@ ENV = 'development'
 # statement for enabling the development environment
 DEBUG = True
 
+# Maximum items to fetch in paginate
+WIIM_COUNT_LIMIT = 100
+
 # SQLAlchemy options
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False
 # SQLALCHEMY_TRACK_MODIFICATIONS = True
 # define the database
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://wiim:wiimpass@localhost/wiim'
