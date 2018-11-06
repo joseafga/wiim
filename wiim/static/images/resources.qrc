@@ -1,0 +1,27 @@
+<RCC>
+  <qresource>
+    <file>images/icons/svg/mind_map.svg</file>
+    <file>images/icons/mind_map_96.png</file>
+    <file>images/icons/mind_map_48.png</file>
+
+    <file>images/icons/svg/services.svg</file>
+    <file>images/icons/services_96.png</file>
+    <file>images/icons/services_48.png</file>
+
+    <file>images/icons/svg/factory.svg</file>
+    <file>images/icons/factory_96.png</file>
+    <file>images/icons/factory_48.png</file>
+
+    <file>images/icons/svg/folder.svg</file>
+    
+    <file>images/icons/svg/tree_structure.svg</file>
+
+    <file>images/icons/svg/info.svg</file>
+    
+    <file>images/icons/svg/ratings.svg</file>
+
+    <file>images/icons/icon_16.png</file>
+    <file>images/icons/icon_32.png</file>
+    <file>images/icons/icon_64.png</file>
+  </qresource>
+</RCC>
