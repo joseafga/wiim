@@ -5,7 +5,7 @@ ENV = 'development'
 DEBUG = True
 
 # SQLAlchemy options
-SQLALCHEMY_ECHO = False
+SQLALCHEMY_ECHO = True
 # SQLALCHEMY_TRACK_MODIFICATIONS = True
 # define the database
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://wiim:wiimpass@localhost/wiim'
