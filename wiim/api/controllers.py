@@ -236,7 +236,7 @@ def create_tag():
 def get_qrcode(id):
     """ Get QRCode image for Tag """
     img = qrcode.generate('tag', id)
-    return send_file(img, mimetype='image/png')
+    return send_file(img, mimetype='image/jpeg')
 
 
 # ----> RECORDS <-----
