@@ -1,5 +1,5 @@
 from .models import db, ma
-from .controllers import api_bp
+from .routes import api_bp
 
 
 def init_app(app):
