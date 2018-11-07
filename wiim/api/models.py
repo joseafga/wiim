@@ -29,7 +29,7 @@ class Site(db.Model):
     # zones = db.relationship('Zone', backref='site', lazy='dynamic')
 
     def __repr__(self):
-        return '<Site: {}>'.format(self.name)
+        return '<Site {}>'.format(self.id)
 
 
 class Zone(db.Model):
@@ -45,7 +45,7 @@ class Zone(db.Model):
     # processes = db.relationship('Process', backref='zone', lazy='dynamic')
 
     def __repr__(self):
-        return '<Zone: {}>'.format(self.name)
+        return '<Zone {}>'.format(self.id)
 
 
 process_tags = db.Table(
@@ -67,7 +67,7 @@ class Process(db.Model):
     zone = db.relationship('Zone')
 
     def __repr__(self):
-        return '<Process: {}>'.format(self.name)
+        return '<Process {}>'.format(self.id)
 
 
 class Server(db.Model):
@@ -79,7 +79,7 @@ class Server(db.Model):
     # tags = db.relationship('Tag', backref='server', lazy='dynamic')
 
     def __repr__(self):
-        return '<Server: {}>'.format(self.uid)
+        return '<Server {}>'.format(self.id)
 
 
 class Tag(db.Model):
@@ -98,7 +98,7 @@ class Tag(db.Model):
     # records = db.relationship('Record', backref='tag', lazy='dynamic')
 
     def __repr__(self):
-        return '<Tag: {}>'.format(self.name)
+        return '<Tag {}>'.format(self.id)
 
 
 class Record(db.Model):
@@ -115,7 +115,7 @@ class Record(db.Model):
     tag = db.relationship('Tag')
 
     def __repr__(self):
-        return '<Record: {}>'.format(self.value)
+        return '<Record {}>'.format(self.id)
 
 
 # ----> SCHEMAS <-----
