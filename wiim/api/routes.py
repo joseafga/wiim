@@ -1,5 +1,5 @@
 """
-wiim.api.controllers
+wiim.api.routes
 
 Include routes and database functions for API
 

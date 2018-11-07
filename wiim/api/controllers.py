@@ -1,7 +1,7 @@
 """
 wiim.api.controllers
 
-Include routes and database functions for API
+Include database functions for API
 
 :copyright: © 2018 by José Almeida.
 :license: CC BY-NC 4.0, see LICENSE for more details.
