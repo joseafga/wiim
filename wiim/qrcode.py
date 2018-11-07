@@ -21,7 +21,7 @@ def generate(type, id):
         version=4,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=10,
-        border=2,
+        border=1,
     )
 
     # set content
@@ -40,7 +40,7 @@ def generate(type, id):
 
     # get file bytes
     img_io = BytesIO()
-    im.save(img_io, 'JPEG', quality=70)
+    im.save(img_io, 'PNG')
     img_io.seek(0)
     # im.show()  # show final qrcode image
 
