@@ -7,26 +7,168 @@ Include routes and database functions for API
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
-from flask import Blueprint, make_response, abort, request, jsonify
+from flask import Blueprint, make_response, abort, request, jsonify, current_app as app
 from werkzeug.exceptions import HTTPException
 # application imports
-from wiim.api.models import db, Process, Tag, Record, TagSchema, RecordSchema
+from wiim.api.models import db, Process, Tag, Record, ProcessSchema, TagSchema, RecordSchema
 
 # Define the blueprint: 'api', set its url prefix: app.url/api
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
+
+
+class TagController():
+    """ Handle API for tags """
+    @staticmethod
+    def create(name, alias, server_id, comment="", unit="", icon=""):
+        """ Create a Tag
+
+        keyword arguments:
+        name -- tag name (required)
+        alias -- tag alias for easy identification (required)
+        server_id -- tag server id (required)
+        comment -- tag comment or description (default "")
+        unit -- tag unit measure (default "")
+        icon -- tag icon (default "")
+        """
+        tag = Tag(
+            name=name,
+            alias=alias,
+            comment=comment,
+            unit=unit,
+            icon=icon,
+            server_id=server_id
+        )
+
+        # commit to database
+        db.session.add(tag)
+        db.session.commit()
+
+        return {'success': {
+            'message': 'Tag was created successfully!'
+        }}  # created
+
+    @staticmethod
+    def get_all(page=1, count=0):
+        """ Get all Tags
+
+        keyword arguments:
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        """
+        tags_schema = TagSchema(many=True)
+
+        # limit fetch quantity
+        if not count or count > app.config['WIIM_COUNT_LIMIT']:
+            count = app.config['WIIM_COUNT_LIMIT']
+
+        tags = Tag.query.paginate(page, count).items
+        tags = tags_schema.dump(tags).data
+
+        return {'tags': tags}
+
+    @staticmethod
+    def get(id):
+        """ Get single Tag
+
+        keyword arguments:
+        id -- Tag id (required)
+        """
+        tag_schema = TagSchema()
+
+        tag = Tag.query.get(id)
+        tag = tag_schema.dump(tag).data
+
+        return tag
+
+    @staticmethod
+    def update():
+        pass
+
+    @staticmethod
+    def destroy():
+        pass
+
+
+class RecordController():
+    """ Handle API for tags """
+    @staticmethod
+    def create(time_opc, value, tag_id, quality="Unknown"):
+        """ Create a Record
+
+        keyword arguments:
+        time_opc -- time passed by opcua (required)
+        value -- opcua variable value (required)
+        tag_id -- id of the corresponding tag (required)
+        quality -- opcua signal quality (default "Unknown")
+        """
+        record = Record(
+            time_opc=time_opc,
+            value=value,
+            quality=quality,
+            tag_id=tag_id
+        )
+
+        # commit to database
+        db.session.add(record)
+        db.session.commit()
+
+        return {'success': {
+            'message': 'Record was created successfully!'
+        }}  # created
+
+    @staticmethod
+    def get_all(page=1, count=0):
+        """ Get all Tags
+
+        keyword arguments:
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        """
+        records_schema = RecordSchema(many=True)
+
+        # limit fetch quantity
+        if not count or count > app.config['WIIM_COUNT_LIMIT']:
+            count = app.config['WIIM_COUNT_LIMIT']
+
+        records = Record.query.paginate(page, count).items
+        records = records_schema.dump(records).data
+
+        return {'records': records}
+
+    @staticmethod
+    def get(id):
+        """ Get single Record
+
+        keyword arguments:
+        id -- Record id (required)
+        """
+        record_schema = RecordSchema()
+
+        record = Record.query.get(id)
+        record = record_schema.dump(record).data
+
+        return record
+
+    @staticmethod
+    def update():
+        pass
+
+    @staticmethod
+    def destroy():
+        pass
 
 
 # ----> PROCESSES <-----
 
 @api_bp.route('/processes', methods=['GET'])
 def get_processes():
-    ''' Return all processes '''
+    """ Return all processes """
     # return jsonify({'tags': tags})
 
 
 @api_bp.route('/processes/<int:id>', methods=['GET'])
-def get_process(id):
-    ''' Return process with specified id '''
+def get_process():
+    """ Return process with specified id """
     # tag = [tag for tag in tags if tag['id'] == id]
     # if len(tag) == 0:
     #     abort(404)  # not found error
@@ -37,92 +179,59 @@ def get_process(id):
 # ----> TAGS <-----
 
 @api_bp.route('/tags', methods=['GET'])
-def get_tags(page=1):
-    ''' Return all tags '''
-    # return jsonify({'tags': Tag.query.all})
-    tags_schema = TagSchema(many=True)
+def get_tags():
+    """ Return all Tags """
+    # pagination page, only positive values
+    page = abs(int(request.args.get('page', 1)))
+    # number of results displayed
+    count = int(request.args.get('count', app.config['WIIM_COUNT_LIMIT']))
 
-    tags = Tag.query.paginate(1, 100).items
-    tags = tags_schema.dump(tags).data
-
-    return jsonify({'tags': tags})
+    return jsonify(TagController.get_all(page, count))
 
 
-@api_bp.route('/tags', methods=['POST'])
+@api_bp.route('/tags/<int:id>', methods=['GET'])
+def get_tag():
+    """ Return Tag with specified id """
+    return jsonify(TagController.get(id))
+
+
+@api_bp.route('/tags/create', methods=['POST'])
 def create_tag():
-    ''' Create a new tag '''
+    """ Create a new Tag """
     # checks request exists and have title attribute
     if not request.json or not {'name', 'alias', 'server_id'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
-    # create Tag object
-    tag = Tag(
-        name=request.json['name'],
-        alias=request.json['alias'],
-        server_id=request.json['server_id']
-    )
-    tag.comment = request.json.get('comment', "")
-    tag.unit = request.json.get('unit', "")
-    tag.icon = request.json.get('icon', "")
-    # commit to database
-    db.session.add(tag)
-    db.session.commit()
-
-    # get schema and dump
-    # tag_schema = TagSchema()
-    # tag = tag_schema.dump(tag).data
-    # return jsonify({'tag': tag}), 201  # created
-
-    return jsonify(success={
-        'message': 'Tag was created successfully!'
-    }), 201  # created
-
-
-@api_bp.route('/tags/<int:id>', methods=['GET'])
-def get_tag(id):
-    ''' Return tag with specified id '''
-    # tag = [tag for tag in tags if tag['id'] == id]
-    # if len(tag) == 0:
-    #     abort(404)  # not found error
-
-    # return jsonify({'tag': tag[0]})
+    return jsonify(TagController.create(**request.json)), 201  # created
 
 
 # ----> RECORDS <-----
 
 @api_bp.route('/records', methods=['GET'])
-def get_records(page=1):
-    ''' Return all records '''
-    # return jsonify({'records': Record.query.all})
-    records_schema = RecordSchema(many=True)
+def get_records():
+    """ Return all Records """
+    # pagination page, only positive values
+    page = abs(int(request.args.get('page', 1)))
+    # number of results displayed
+    count = int(request.args.get('count', app.config['WIIM_COUNT_LIMIT']))
 
-    records = Record.query.paginate(1, 100).items
-    records = records_schema.dump(records).data
-
-    return jsonify({'records': records})
+    return jsonify(RecordController.get_all(page, count))
 
 
-@api_bp.route('/records', methods=['POST'])
+@api_bp.route('/records/<int:id>', methods=['GET'])
+def get_record():
+    """ Return Record with specified id """
+    return jsonify(RecordController.get(id))
+
+
+@api_bp.route('/records/create', methods=['POST'])
 def create_record():
-    ''' Create a new tag '''
+    """ Create a new Record """
     # checks request exists and have title attribute
     if not request.json or not {'time_opc', 'value', 'tag_id'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
-    # create Record object
-    record = Record(
-        time_opc=request.json['time_opc'],
-        value=request.json['value'],
-        tag_id=request.json['tag_id']
-    )
-    record.quality = request.json.get('quality', 'Unknown')
-    # commit to database
-    db.session.add(record)
-    db.session.commit()
-
-    return jsonify(success={
-        'message': 'Record was created successfully!'
-    }), 201  # created
+    return jsonify(RecordController.create(**request.json)), 201  # created
 
 
 # ----> ERRORS <-----

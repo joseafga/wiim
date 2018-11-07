@@ -165,7 +165,7 @@ class TagSchema(ma.ModelSchema):
 
     class Meta:
         # Fields to expose
-        fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
+        # fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
         model = Tag
 
     server = fields.Nested(ServerSchema)
@@ -176,7 +176,7 @@ class RecordSchema(ma.ModelSchema):
 
     class Meta:
         # Fields to expose
-        fields = ('time_opc', 'time_db', 'value', 'quality', 'tag')
+        # fields = ('time_opc', 'time_db', 'value', 'quality', 'tag')
         model = Record
 
     tag = fields.Nested(TagSchema)
