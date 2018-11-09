@@ -33,9 +33,10 @@ class ProcessService():
         db.session.add(process)
         db.session.commit()
 
-        return {'success': {
+        return {
+            'status': 'success',
             'message': 'Process was created successfully!'
-        }}  # created
+        }  # created
 
     @staticmethod
     def get_all(page=1, count=0):
@@ -106,9 +107,10 @@ class TagService():
         db.session.add(tag)
         db.session.commit()
 
-        return {'success': {
+        return {
+            'status': 'success',
             'message': 'Tag was created successfully!'
-        }}  # created
+        }  # created
 
     @staticmethod
     def get_all(page=1, count=0):
@@ -175,9 +177,10 @@ class RecordService():
         db.session.add(record)
         db.session.commit()
 
-        return {'success': {
+        return {
+            'status': 'success',
             'message': 'Record was created successfully!'
-        }}  # created
+        }  # created
 
     @staticmethod
     def get_all(page=1, count=0):

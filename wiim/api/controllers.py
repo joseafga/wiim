@@ -120,11 +120,15 @@ def create_record():
 def handle_error(e):
     # HTTP error exception
     if isinstance(e, HTTPException):
-        return make_response(jsonify(error={
+        return make_response(jsonify({
+            'status': 'error',
             'code': str(e.code),
             'name': e.name,
             'message': e.description
         }), e.code)
 
     # default error with bad request code
-    return make_response(jsonify(error=str(e)), 400)
+    return make_response(jsonify({
+        'status': 'error',
+        'msg': str(e)
+    }), 400)
