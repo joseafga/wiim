@@ -12,6 +12,73 @@ from flask import current_app as app
 from wiim.api.models import db, Process, Tag, Record, ProcessSchema, TagSchema, RecordSchema
 
 
+class ProcessService():
+    """ Handle API for processes """
+    @staticmethod
+    def create(name, zone_id, comment=""):
+        """ Create a Process
+
+        keyword arguments:
+        name -- process name (required)
+        zone_id -- process zone id (required)
+        comment -- process comment or description (default "")
+        """
+        process = Process(
+            name=name,
+            zone_id=zone_id,
+            comment=comment
+        )
+
+        # commit to database
+        db.session.add(process)
+        db.session.commit()
+
+        return {'success': {
+            'message': 'Process was created successfully!'
+        }}  # created
+
+    @staticmethod
+    def get_all(page=1, count=0):
+        """ Get all Processes
+
+        keyword arguments:
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        """
+        processes_schema = ProcessSchema(many=True)
+
+        # limit fetch quantity
+        if not count or count > app.config['WIIM_COUNT_LIMIT']:
+            count = app.config['WIIM_COUNT_LIMIT']
+
+        processes = Process.query.paginate(page, count).items
+        processes = processes_schema.dump(processes).data
+
+        return {'Processes': processes}
+
+    @staticmethod
+    def get(id):
+        """ Get single Process
+
+        keyword arguments:
+        id -- Process id (required)
+        """
+        process_schema = ProcessSchema()
+
+        process = Process.query.get(id)
+        process = process_schema.dump(process).data
+
+        return process
+
+    @staticmethod
+    def update():
+        pass
+
+    @staticmethod
+    def destroy():
+        pass
+
+
 class TagService():
     """ Handle API for tags """
     @staticmethod
