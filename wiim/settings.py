@@ -29,8 +29,7 @@ class Config(object):
 class ProductionConfig(Config):
     ENV = 'production'
     # Caching times in seconds
-    CACHE_DEFAULT_TIMEOUT = 60
-    WIIM_CACHE_REQUEST_TIMEOUT = 1
+    CACHE_DEFAULT_TIMEOUT = 1
     # SQLAlchemy options
     SQLALCHEMY_ECHO = False
 
@@ -43,8 +42,7 @@ class DevelopmentConfig(Config):
     # define the database
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://wiim:wiimpass@localhost/wiim_dev'
     # Caching times in seconds
-    CACHE_DEFAULT_TIMEOUT = 60
-    WIIM_CACHE_REQUEST_TIMEOUT = 1
+    CACHE_DEFAULT_TIMEOUT = 5
     # SQLAlchemy options
     SQLALCHEMY_ECHO = True
 

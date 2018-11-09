@@ -1,5 +1,5 @@
 from .models import db, ma
-from .controllers import cache, api_bp, init_routes
+from .controllers import cache, api_bp
 
 
 def init_app(app):
@@ -11,7 +11,7 @@ def init_app(app):
     cache.init_app(app)
 
     # initilize routes
-    init_routes(app)
+    # init_routes(app)
 
     # add blueprint to app
     app.register_blueprint(api_bp)
