@@ -11,7 +11,7 @@ Aplicativo para desktop do servidor.
 * pip install cryptography
     - RESTful
 * pip install flask
-* pip install flask-jsonpify flask-sqlalchemy
+* pip install flask-jsonpify flask-sqlalchemy flask-caching flask-restful
 * pip install pymysql
 * pip install flask-marshmallow marshmallow-sqlalchemy
     - QRCode

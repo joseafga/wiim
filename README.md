@@ -11,9 +11,9 @@ Desktop server application.
 * pip install cryptography
     - RESTful
 * pip install flask
-* pip install flask-jsonpify flask-sqlalchemy
-* pip install pymysql
+* pip install flask-sqlalchemy flask-caching flask-migrate flask-script
 * pip install flask-marshmallow marshmallow-sqlalchemy
+* pip install pymysql
     - QRCode
 * pip install qrcode
 * pip install Pillow (PIL dead?)

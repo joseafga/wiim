@@ -1,154 +1,118 @@
 """
-wiim.api.controllers
+wiim.api.controller
 
-Include database functions for API
+Include routes management for API
 
 :copyright: © 2018 by José Almeida.
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
-from flask import current_app as app
+from flask import Blueprint, make_response, abort, request, send_file, jsonify
+from flask_caching import Cache
+from werkzeug.exceptions import HTTPException
 # application imports
-from wiim.api.models import db, Process, Tag, Record, ProcessSchema, TagSchema, RecordSchema
+from wiim import qrcode
+from wiim.api.services import TagService, RecordService
+
+# Cache requests
+cache = Cache()
+
+# Define the blueprint: 'api', set its url prefix: app.url/api
+api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
-class TagController():
-    """ Handle API for tags """
-    @staticmethod
-    def create(name, alias, server_id, comment="", unit="", icon=""):
-        """ Create a Tag
+def init_routes(app):
+    request_timeout = app.config['WIIM_CACHE_REQUEST_TIMEOUT']
+    qrcode_timeout = app.config['WIIM_CACHE_QRCODE_TIMEOUT']
+    # ----> PROCESSES <-----
 
-        keyword arguments:
-        name -- tag name (required)
-        alias -- tag alias for easy identification (required)
-        server_id -- tag server id (required)
-        comment -- tag comment or description (default "")
-        unit -- tag unit measure (default "")
-        icon -- tag icon (default "")
-        """
-        tag = Tag(
-            name=name,
-            alias=alias,
-            comment=comment,
-            unit=unit,
-            icon=icon,
-            server_id=server_id
-        )
+    @api_bp.route('/processes', strict_slashes=False, methods=['GET'])
+    def get_processes():
+        """ Get all processes """
+        # return jsonify({'tags': tags})
 
-        # commit to database
-        db.session.add(tag)
-        db.session.commit()
+    @api_bp.route('/processes/<int:id>', strict_slashes=False, methods=['GET'])
+    def get_process():
+        """ Get process with specified id """
+        # tag = [tag for tag in tags if tag['id'] == id]
+        # if len(tag) == 0:
+        #     abort(404)  # not found error
 
-        return {'success': {
-            'message': 'Tag was created successfully!'
-        }}  # created
+        # return jsonify({'tag': tag[0]})
 
-    @staticmethod
-    def get_all(page=1, count=0):
-        """ Get all Tags
+    # ----> TAGS <-----
 
-        keyword arguments:
-        page -- page number (default 1)
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        """
-        tags_schema = TagSchema(many=True)
+    @api_bp.route('/tags', strict_slashes=False, methods=['GET'])
+    @cache.cached(timeout=request_timeout)
+    def get_tags():
+        """ Get all Tags """
+        # pagination page, only positive values
+        page = int(request.args.get('page', 1))
+        # number of results displayed
+        count = int(request.args.get('count', 0))
 
-        # limit fetch quantity
-        if not count or count > app.config['WIIM_COUNT_LIMIT']:
-            count = app.config['WIIM_COUNT_LIMIT']
+        return jsonify(TagService.get_all(page, count))
 
-        tags = Tag.query.paginate(page, count).items
-        tags = tags_schema.dump(tags).data
+    @api_bp.route('/tags/<int:id>', strict_slashes=False, methods=['GET'])
+    @cache.cached(timeout=request_timeout)
+    def get_tag(id):
+        """ Get Tag with specified id """
+        return jsonify(TagService.get(id))
 
-        return {'tags': tags}
+    @api_bp.route('/tags/create', strict_slashes=False, methods=['POST'])
+    @cache.cached(timeout=request_timeout)
+    def create_tag():
+        """ Create a new Tag """
+        # checks request exists and have title attribute
+        if not request.json or not {'name', 'alias', 'server_id'}.issubset(set(request.json)):
+            abort(400)  # bad request error
 
-    @staticmethod
-    def get(id):
-        """ Get single Tag
+        return jsonify(TagService.create(**request.json)), 201  # created
 
-        keyword arguments:
-        id -- Tag id (required)
-        """
-        tag_schema = TagSchema()
+    @api_bp.route('/tags/qrcode/<int:id>', strict_slashes=False, methods=['GET'])
+    @cache.cached(timeout=qrcode_timeout)
+    def get_qrcode(id):
+        """ Get QRCode image for Tag """
+        img = qrcode.generate('tag', id)
+        return send_file(img, mimetype='image/png')
 
-        tag = Tag.query.get(id)
-        tag = tag_schema.dump(tag).data
+    # ----> RECORDS <-----
 
-        return tag
+    @api_bp.route('/records', strict_slashes=False, methods=['GET'])
+    def get_records():
+        """ Return all Records """
+        # pagination page, only positive values
+        page = int(request.args.get('page', 1))
+        # number of results displayed
+        count = int(request.args.get('count', 0))
 
-    @staticmethod
-    def update():
-        pass
+        return jsonify(RecordService.get_all(page, count))
 
-    @staticmethod
-    def destroy():
-        pass
+    @api_bp.route('/records/<int:id>', strict_slashes=False, methods=['GET'])
+    def get_record(id):
+        """ Return Record with specified id """
+        return jsonify(RecordService.get(id))
 
+    @api_bp.route('/records/create', strict_slashes=False, methods=['POST'])
+    def create_record():
+        """ Create a new Record """
+        # checks request exists and have title attribute
+        if not request.json or not {'time_opc', 'value', 'tag_id'}.issubset(set(request.json)):
+            abort(400)  # bad request error
 
-class RecordController():
-    """ Handle API for tags """
-    @staticmethod
-    def create(time_opc, value, tag_id, quality="Unknown"):
-        """ Create a Record
+        return jsonify(RecordService.create(**request.json)), 201  # created
 
-        keyword arguments:
-        time_opc -- time passed by opcua (required)
-        value -- opcua variable value (required)
-        tag_id -- id of the corresponding tag (required)
-        quality -- opcua signal quality (default "Unknown")
-        """
-        record = Record(
-            time_opc=time_opc,
-            value=value,
-            quality=quality,
-            tag_id=tag_id
-        )
+    # ----> ERRORS <-----
 
-        # commit to database
-        db.session.add(record)
-        db.session.commit()
+    @api_bp.errorhandler(Exception)
+    def handle_error(e):
+        # HTTP error exception
+        if isinstance(e, HTTPException):
+            return make_response(jsonify(error={
+                'code': str(e.code),
+                'name': e.name,
+                'message': e.description
+            }), e.code)
 
-        return {'success': {
-            'message': 'Record was created successfully!'
-        }}  # created
-
-    @staticmethod
-    def get_all(page=1, count=0):
-        """ Get all Tags
-
-        keyword arguments:
-        page -- page number (default 1)
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        """
-        records_schema = RecordSchema(many=True)
-
-        # limit fetch quantity
-        if not count or count > app.config['WIIM_COUNT_LIMIT']:
-            count = app.config['WIIM_COUNT_LIMIT']
-
-        records = Record.query.paginate(page, count).items
-        records = records_schema.dump(records).data
-
-        return {'records': records}
-
-    @staticmethod
-    def get(id):
-        """ Get single Record
-
-        keyword arguments:
-        id -- Record id (required)
-        """
-        record_schema = RecordSchema()
-
-        record = Record.query.get(id)
-        record = record_schema.dump(record).data
-
-        return record
-
-    @staticmethod
-    def update():
-        pass
-
-    @staticmethod
-    def destroy():
-        pass
+        # default error with bad request code
+        return make_response(jsonify(error=str(e)), 400)

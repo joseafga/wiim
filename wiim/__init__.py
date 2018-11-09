@@ -25,9 +25,6 @@ def create_app(config_filename):
     with app.app_context():
         api.init_app(app)
 
-        # create database tables
-        api.db.create_all()
-
     # import modules blueprints
     # from wiim.api.controllers import mod_api
     # register blueprints

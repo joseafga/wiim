@@ -10,7 +10,7 @@ using collation utf8mb4_unicode_ci
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import mysql
-from marshmallow import Schema, fields
+from marshmallow import fields
 from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
