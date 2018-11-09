@@ -9,12 +9,12 @@ from wiim import create_app
 from wiim.api import db
 
 config = {
-    'dev': 'wiim.settings.DevelopmentConfig',
-    'prod': 'wiim.settings.ProductionConfig',
-    'test': 'wiim.settings.TestingConfig'
+    'development': 'wiim.settings.DevelopmentConfig',
+    'production': 'wiim.settings.ProductionConfig',
+    'testing': 'wiim.settings.TestingConfig'
 }
 
-app = create_app(config[os.getenv('WIIM_ENV') or 'dev'])
+app = create_app(config[os.getenv('WIIM_ENV') or 'development'])
 app.app_context().push()
 
 manager = Manager(app)
@@ -24,6 +24,20 @@ migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 # add server command
 manager.add_command('run', Server())
+
+
+@manager.command
+def routes():
+    import urllib
+
+    output = []
+    for rule in app.url_map.iter_rules():
+        methods = ','.join(rule.methods)
+        line = urllib.parse.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, rule))
+        output.append(line)
+
+    for line in sorted(output):
+        print(line)
 
 
 # @manager.command
