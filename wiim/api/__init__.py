@@ -10,8 +10,8 @@ def init_app(app):
     ma.init_app(app)
     cache.init_app(app)
 
-    # initilize routes
-    # init_routes(app)
+    # define strict slashes default
+    app.url_map.strict_slashes = False
 
     # add blueprint to app
     app.register_blueprint(api_bp)
