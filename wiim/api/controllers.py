@@ -114,7 +114,7 @@ def get_process():
 
 
 @api_bp.route('/processes/create', methods=['POST'])
-def create_tag():
+def create_process():
     """ Create a new Tag """
     # checks request exists and have title attribute
     if not request.json or not {'name', 'zone_id'}.issubset(set(request.json)):
@@ -125,7 +125,7 @@ def create_tag():
 
 @api_bp.route('/processes/qrcode/<int:id>', methods=['GET'])
 @cache.cached(timeout=3600)  # cache for 1 hour
-def get_qrcode(id):
+def get_process_qrcode(id):
     """ Get QRCode image for Tag """
     img = qrcode.generate('process', id)
 
@@ -196,7 +196,7 @@ def create_tag():
 
 @api_bp.route('/tags/qrcode/<int:id>', methods=['GET'])
 @cache.cached(timeout=3600)  # cache for 1 hour
-def get_qrcode(id):
+def get_tag_qrcode(id):
     """ Get QRCode image for Tag """
     img = qrcode.generate('tag', id)
 
