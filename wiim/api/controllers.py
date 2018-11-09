@@ -12,13 +12,22 @@ from flask_caching import Cache
 from werkzeug.exceptions import HTTPException
 # application imports
 from wiim import qrcode
-from wiim.api.services import TagService, RecordService
+from .models import *
+from .services import BaseService
 
 # Cache requests
 cache = Cache()
 
 # Define the blueprint: 'api', set its url prefix: app.url/api
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
+
+# initialize services
+SiteService = BaseService(('Tag', 'Tags'), Site, SiteSchema)
+ZoneService = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
+ProcessService = BaseService(('Process', 'Processes'), Process, ProcessSchema)
+ServerService = BaseService(('Server', 'Servers'), Server, ServerSchema)
+TagService = BaseService(('Tag', 'Tags'), Tag, TagSchema)
+RecordService = BaseService(('Record', 'Records'), Record, RecordSchema)
 
 
 # ----> PROCESSES <-----
@@ -59,11 +68,10 @@ def get_tags():
 @cache.cached()
 def get_tag(id):
     """ Get Tag with specified id """
-    return jsonify(TagService.get(id))
+    return jsonify(TagService.get_by_id(id))
 
 
 @api_bp.route('/tags/create', strict_slashes=False, methods=['POST'])
-@cache.cached()
 def create_tag():
     """ Create a new Tag """
     # checks request exists and have title attribute
@@ -100,11 +108,10 @@ def get_records():
 @cache.cached()
 def get_record(id):
     """ Return Record with specified id """
-    return jsonify(RecordService.get(id))
+    return jsonify(RecordService.get_by_id(id))
 
 
 @api_bp.route('/records/create', strict_slashes=False, methods=['POST'])
-@cache.cached()
 def create_record():
     """ Create a new Record """
     # checks request exists and have title attribute
