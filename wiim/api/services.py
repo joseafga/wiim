@@ -73,5 +73,19 @@ class BaseService():
     def update():
         pass
 
-    def destroy():
-        pass
+    def destroy_by_id(self, id):
+        """ Remove a Model by id
+
+        keyword arguments:
+        id -- Item id (required)
+        """
+        item = self.Model.query.get(id)
+
+        # commit to database
+        db.session.delete(item)
+        db.session.commit()
+
+        return {
+            'status': 'success',
+            'message': self.name[0] + ' was destroyed successfully!'
+        }  # created

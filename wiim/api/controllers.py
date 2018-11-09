@@ -61,6 +61,12 @@ def create_site():
     return jsonify(SiteService.create(**request.json)), 201  # created
 
 
+@api_bp.route('/sites/destroy/<int:id>', methods=['POST'])
+def destroy_site(id):
+    """ Delete site with specified id """
+    return jsonify(SiteService.destroy_by_id(id))
+
+
 # ----> ZONES <-----
 
 @api_bp.route('/zones', methods=['GET'])
@@ -92,6 +98,12 @@ def create_zone():
     return jsonify(ZoneService.create(**request.json)), 201  # created
 
 
+@api_bp.route('/zones/destroy/<int:id>', methods=['POST'])
+def destroy_zone(id):
+    """ Delete zone with specified id """
+    return jsonify(ZoneService.destroy_by_id(id))
+
+
 # ----> PROCESSES <-----
 
 @api_bp.route('/processes', methods=['GET'])
@@ -121,6 +133,12 @@ def create_process():
         abort(400)  # bad request error
 
     return jsonify(ProcessService.create(**request.json)), 201  # created
+
+
+@api_bp.route('/processes/destroy/<int:id>', methods=['POST'])
+def destroy_process(id):
+    """ Delete process with specified id """
+    return jsonify(ProcessService.destroy_by_id(id))
 
 
 @api_bp.route('/processes/qrcode/<int:id>', methods=['GET'])
@@ -163,6 +181,12 @@ def create_server():
     return jsonify(ServerService.create(**request.json)), 201  # created
 
 
+@api_bp.route('/servers/destroy/<int:id>', methods=['POST'])
+def destroy_server(id):
+    """ Delete server with specified id """
+    return jsonify(ServerService.destroy_by_id(id))
+
+
 # ----> TAGS <-----
 
 @api_bp.route('/tags', methods=['GET'])
@@ -192,6 +216,12 @@ def create_tag():
         abort(400)  # bad request error
 
     return jsonify(TagService.create(**request.json)), 201  # created
+
+
+@api_bp.route('/tags/destroy/<int:id>', methods=['POST'])
+def destroy_tag(id):
+    """ Delete tag with specified id """
+    return jsonify(TagService.destroy_by_id(id))
 
 
 @api_bp.route('/tags/qrcode/<int:id>', methods=['GET'])
@@ -232,6 +262,12 @@ def create_record():
         abort(400)  # bad request error
 
     return jsonify(RecordService.create(**request.json)), 201  # created
+
+
+@api_bp.route('/records/destroy/<int:id>', methods=['POST'])
+def destroy_record(id):
+    """ Delete record with specified id """
+    return jsonify(RecordService.destroy_by_id(id))
 
 
 # ----> ERRORS <-----
