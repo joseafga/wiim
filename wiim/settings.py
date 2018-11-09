@@ -31,7 +31,6 @@ class ProductionConfig(Config):
     # Caching times in seconds
     CACHE_DEFAULT_TIMEOUT = 60
     WIIM_CACHE_REQUEST_TIMEOUT = 1
-    WIIM_CACHE_QRCODE_TIMEOUT = 3600
     # SQLAlchemy options
     SQLALCHEMY_ECHO = False
 
@@ -46,7 +45,6 @@ class DevelopmentConfig(Config):
     # Caching times in seconds
     CACHE_DEFAULT_TIMEOUT = 60
     WIIM_CACHE_REQUEST_TIMEOUT = 1
-    WIIM_CACHE_QRCODE_TIMEOUT = 3600
     # SQLAlchemy options
     SQLALCHEMY_ECHO = True
 

@@ -23,7 +23,6 @@ api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 
 def init_routes(app):
     request_timeout = app.config['WIIM_CACHE_REQUEST_TIMEOUT']
-    qrcode_timeout = app.config['WIIM_CACHE_QRCODE_TIMEOUT']
     # ----> PROCESSES <-----
 
     @api_bp.route('/processes', strict_slashes=False, methods=['GET'])
@@ -70,7 +69,6 @@ def init_routes(app):
         return jsonify(TagService.create(**request.json)), 201  # created
 
     @api_bp.route('/tags/qrcode/<int:id>', strict_slashes=False, methods=['GET'])
-    @cache.cached(timeout=qrcode_timeout)
     def get_qrcode(id):
         """ Get QRCode image for Tag """
         img = qrcode.generate('tag', id)
