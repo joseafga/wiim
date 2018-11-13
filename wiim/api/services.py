@@ -98,7 +98,7 @@ class BaseService():
         })  # created
 
 
-class SinceService(BaseService):
+class TagService(BaseService):
     """ Add since methods to Base"""
 
     def __init__(self, *args, **kwargs):
@@ -145,9 +145,9 @@ class SinceService(BaseService):
 
 
 # Initialize services
-SiteService = BaseService(('Site', 'Sites'), Site, SiteSchema)
-ZoneService = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
-ProcessService = BaseService(('Process', 'Processes'), Process, ProcessSchema)
-ServerService = BaseService(('Server', 'Servers'), Server, ServerSchema)
-TagService = SinceService(('Tag', 'Tags'), Tag, TagSchema)
-RecordService = BaseService(('Record', 'Records'), Record, RecordSchema)
+site_service = BaseService(('Site', 'Sites'), Site, SiteSchema)
+zone_service = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
+process_service = BaseService(('Process', 'Processes'), Process, ProcessSchema)
+server_service = BaseService(('Server', 'Servers'), Server, ServerSchema)
+tag_service = Tagservice(('Tag', 'Tags'), Tag, TagSchema)
+record_service = BaseService(('Record', 'Records'), Record, RecordSchema)

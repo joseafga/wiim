@@ -13,8 +13,8 @@ from werkzeug.exceptions import HTTPException
 # application imports
 from wiim import qrcode
 from .services import Record, Tag, Server, Process, Zone, Site
-from .services import RecordService, TagService, ServerService, \
-    ProcessService, ZoneService, SiteService
+from .services import record_service, tag_service, server_service, \
+    process_service, zone_service, site_service
 
 # Cache requests
 cache = Cache()
@@ -34,7 +34,7 @@ def get_sites():
     # number of results displayed
     count = int(request.args.get('count', 0))
 
-    return jsonify(SiteService.get_all(page, count))
+    return jsonify(site_service.get_all(page, count))
 
 
 @api_bp.route('/zones', methods=['GET'])
@@ -48,10 +48,10 @@ def get_zones(id=None):
     count = int(request.args.get('count', 0))
 
     if id is None:
-        return jsonify(ZoneService.get_all(page, count))
+        return jsonify(zone_service.get_all(page, count))
 
     # get only zones from specified site
-    return jsonify(ZoneService.get_all(page, count, {'site_id': id}))
+    return jsonify(zone_service.get_all(page, count, {'site_id': id}))
 
 
 @api_bp.route('/processes', methods=['GET'])
@@ -65,10 +65,10 @@ def get_processes(id=None):
     count = int(request.args.get('count', 0))
 
     if id is None:
-        return jsonify(ProcessService.get_all(page, count))
+        return jsonify(process_service.get_all(page, count))
 
     # get only processes from specified zone
-    return jsonify(ProcessService.get_all(page, count, {'zone_id': id}))
+    return jsonify(process_service.get_all(page, count, {'zone_id': id}))
 
 
 @api_bp.route('/servers', methods=['GET'])
@@ -80,7 +80,7 @@ def get_servers():
     # number of results displayed
     count = int(request.args.get('count', 0))
 
-    return jsonify(ServerService.get_all(page, count))
+    return jsonify(server_service.get_all(page, count))
 
 
 @api_bp.route('/tags', methods=['GET'])
@@ -95,10 +95,10 @@ def get_tags(id=None):
     count = int(request.args.get('count', 0))
 
     if id is None:
-        return jsonify(TagService.get_all(page, count))
+        return jsonify(tag_service.get_all(page, count))
 
     # get only tags from specified server
-    return jsonify(TagService.get_all(page, count, {'server_id': id}))
+    return jsonify(tag_service.get_all(page, count, {'server_id': id}))
 
 
 @api_bp.route('/records', methods=['GET'])
@@ -112,10 +112,10 @@ def get_records():
     count = int(request.args.get('count', 0))
 
     if id is None:
-        return jsonify(RecordService.get_all(page, count))
+        return jsonify(record_service.get_all(page, count))
 
     # get only records from specified tag
-    return jsonify(RecordService.get_all(page, count, {'tag_id': id}))
+    return jsonify(record_service.get_all(page, count, {'tag_id': id}))
 
 
 # ----> GET SINGLE <-----
@@ -124,42 +124,42 @@ def get_records():
 @cache.cached()
 def get_site(id):
     """ Get Sites with specified id """
-    return jsonify(SiteService.get_by_id(id))
+    return jsonify(site_service.get_by_id(id))
 
 
 @api_bp.route('/zones/<int:id>', methods=['GET'])
 @cache.cached()
 def get_zone(id):
     """ Get Zones with specified id """
-    return jsonify(ZoneService.get_by_id(id))
+    return jsonify(zone_service.get_by_id(id))
 
 
 @api_bp.route('/processes/<int:id>', methods=['GET'])
 @cache.cached()
 def get_process(id):
     """ Get process with specified id """
-    return jsonify(ProcessService.get_by_id(id))
+    return jsonify(process_service.get_by_id(id))
 
 
 @api_bp.route('/servers/<int:id>', methods=['GET'])
 @cache.cached()
 def get_server(id):
     """ Get Servers with specified id """
-    return jsonify(ServerService.get_by_id(id))
+    return jsonify(server_service.get_by_id(id))
 
 
 @api_bp.route('/tags/<int:id>', methods=['GET'])
 @cache.cached()
 def get_tag(id):
     """ Get Tag with specified id """
-    return jsonify(TagService.get_by_id(id))
+    return jsonify(tag_service.get_by_id(id))
 
 
 @api_bp.route('/records/<int:id>', methods=['GET'])
 @cache.cached()
 def get_record(id):
     """ Return Record with specified id """
-    return jsonify(RecordService.get_by_id(id))
+    return jsonify(record_service.get_by_id(id))
 
 
 # ----> CREATE <-----
@@ -171,7 +171,7 @@ def create_site():
     if not request.json or not {'name'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
-    return jsonify(SiteService.create(**request.json)), 201  # created
+    return jsonify(site_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('sites/<int:site_id>/zones', methods=['POST'])
@@ -184,7 +184,7 @@ def create_zone(site_id):
     # set site id
     request.json['site_id'] = site_id
 
-    return jsonify(ZoneService.create(**request.json)), 201  # created
+    return jsonify(zone_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('/processes', methods=['POST'])
@@ -194,7 +194,7 @@ def create_process():
     if not request.json or not {'name', 'zone_id'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
-    return jsonify(ProcessService.create(**request.json)), 201  # created
+    return jsonify(process_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('/servers', methods=['POST'])
@@ -204,7 +204,7 @@ def create_server():
     if not request.json or not {'uid'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
-    return jsonify(ServerService.create(**request.json)), 201  # created
+    return jsonify(server_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('/servers/<int:server_id>/tags', methods=['POST'])
@@ -217,7 +217,7 @@ def create_tag(server_id):
     # set server id
     request.json['server_id'] = server_id
 
-    return jsonify(TagService.create(**request.json)), 201  # created
+    return jsonify(tag_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('/records', methods=['POST'])
@@ -227,7 +227,7 @@ def create_record():
     if not request.json or not {'time_opc', 'value', 'tag_id'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
-    return jsonify(RecordService.create(**request.json)), 201  # created
+    return jsonify(record_service.create(**request.json)), 201  # created
 
 
 # ----> DELETE <-----
@@ -235,37 +235,37 @@ def create_record():
 @api_bp.route('/sites/<int:id>', methods=['DELETE'])
 def destroy_site(id):
     """ Delete site with specified id """
-    return jsonify(SiteService.destroy_by_id(id)), 204  # deleted
+    return jsonify(site_service.destroy_by_id(id)), 204  # deleted
 
 
 @api_bp.route('/zones/<int:id>', methods=['DELETE'])
 def destroy_zone(id):
     """ Delete zone with specified id """
-    return jsonify(ZoneService.destroy_by_id(id)), 204  # deleted
+    return jsonify(zone_service.destroy_by_id(id)), 204  # deleted
 
 
 @api_bp.route('/processes/<int:id>', methods=['DELETE'])
 def destroy_process(id):
     """ Delete process with specified id """
-    return jsonify(ProcessService.destroy_by_id(id)), 204  # deleted
+    return jsonify(process_service.destroy_by_id(id)), 204  # deleted
 
 
 @api_bp.route('/servers/<int:id>', methods=['DELETE'])
 def destroy_server(id):
     """ Delete server with specified id """
-    return jsonify(ServerService.destroy_by_id(id)), 204  # deleted
+    return jsonify(server_service.destroy_by_id(id)), 204  # deleted
 
 
 @api_bp.route('/tags/<int:id>', methods=['DELETE'])
 def destroy_tag(id):
     """ Delete tag with specified id """
-    return jsonify(TagService.destroy_by_id(id)), 204  # deleted
+    return jsonify(tag_service.destroy_by_id(id)), 204  # deleted
 
 
 @api_bp.route('/records/<int:id>', methods=['DELETE'])
 def destroy_record(id):
     """ Delete record with specified id """
-    return jsonify(RecordService.destroy_by_id(id)), 204  # deleted
+    return jsonify(record_service.destroy_by_id(id)), 204  # deleted
 
 
 # ----> QRCODE <-----
@@ -293,7 +293,7 @@ def get_tag_qrcode(id):
 @api_bp.route('/tags/test', methods=['GET'])
 def since_tag():
     """ Delete tag with specified id """
-    return jsonify(TagService.since())
+    return jsonify(tag_service.since())
 
 
 # ----> ERRORS <-----
