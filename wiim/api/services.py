@@ -130,7 +130,7 @@ class TagService(BaseService):
             'message': self.name[0] + ' was created successfully!'
         })  # created
 
-    def get_by_process(self, page=1, count=0, filters=None):
+    def get_by_process(self, id, page=1, count=0, filters=None):
         """ Get all tags from specified process
 
         keyword arguments:
@@ -146,14 +146,13 @@ class TagService(BaseService):
 
         # query = Process.query.join(Process.tags)
         # query = Process.query.filter(Process.tags.any(**filters)).all()
-        query = Tag.query.filter(Tag.process.any(**filters))
+        query = Tag.query.filter(Tag.process.any(Process.id == id))
 
         # apply filters or not
         if filters is not None:
             # for attr, value in filters.iteritems():
             #     query = query.filter(getattr(self.Model, attr) == value)
-            # query = query.filter_by(**filters)  # smart filter by kwargs
-            pass
+            query = query.filter_by(**filters)  # smart filter by kwargs
 
         items = query.paginate(page, count).items
         items = items_schema.dump(items).data

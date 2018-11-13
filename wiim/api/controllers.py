@@ -110,7 +110,7 @@ def get_process_tags(id):
     count = int(request.args.get('count', 0))
 
     # get only tags from specified process
-    return jsonify(tag_service.get_by_process(page, count, {'id': id}))
+    return jsonify(tag_service.get_by_process(id, page, count))
 
 
 @api_bp.route('/records', methods=['GET'])
