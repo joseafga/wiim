@@ -30,8 +30,6 @@ class ProductionConfig(Config):
     ENV = 'production'
     # Caching times in seconds
     CACHE_DEFAULT_TIMEOUT = 1
-    # SQLAlchemy options
-    SQLALCHEMY_ECHO = False
 
 
 class DevelopmentConfig(Config):

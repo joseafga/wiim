@@ -19,7 +19,7 @@ CREATE TABLE `tag` (
   `name` VARCHAR(64) NOT NULL,
   `alias` VARCHAR(120) NOT NULL,
   `unit` VARCHAR(64) NOT NULL,
-  `comment` VARCHAR(120) NOT NULL
+  `comment` VARCHAR(120) NOT NULL,
   `icon` VARCHAR(255) NOT NULL
 )
 CHARACTER SET 'utf8' 
