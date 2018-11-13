@@ -102,7 +102,7 @@ class TagService(BaseService):
     """ Add since methods to Base"""
 
     def __init__(self, *args, **kwargs):
-        super(SinceService, self).__init__(*args, **kwargs)
+        super(TagService, self).__init__(*args, **kwargs)
 
     def create(self, name, alias, comment, unit, icon, server_id, processes):
         """ Create a new Model """
@@ -149,5 +149,5 @@ site_service = BaseService(('Site', 'Sites'), Site, SiteSchema)
 zone_service = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
 process_service = BaseService(('Process', 'Processes'), Process, ProcessSchema)
 server_service = BaseService(('Server', 'Servers'), Server, ServerSchema)
-tag_service = Tagservice(('Tag', 'Tags'), Tag, TagSchema)
+tag_service = TagService(('Tag', 'Tags'), Tag, TagSchema)
 record_service = BaseService(('Record', 'Records'), Record, RecordSchema)
