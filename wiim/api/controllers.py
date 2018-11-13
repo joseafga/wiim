@@ -51,9 +51,7 @@ def get_zones(id=None):
         return jsonify(ZoneService.get_all(page, count))
 
     # get only zones from specified site
-    filters = (Zone.site_id == id)
-
-    return jsonify(ZoneService.get_all(page, count, filters))
+    return jsonify(ZoneService.get_all(page, count, {'site_id': id}))
 
 
 @api_bp.route('/processes', methods=['GET'])
@@ -69,10 +67,8 @@ def get_processes(id=None):
     if id is None:
         return jsonify(ProcessService.get_all(page, count))
 
-    # get only processes from specified server
-    filters = (Process.zone_id == id)
-
-    return jsonify(ProcessService.get_all(page, count, filters))
+    # get only processes from specified zone
+    return jsonify(ProcessService.get_all(page, count, {'zone_id': id}))
 
 
 @api_bp.route('/servers', methods=['GET'])
@@ -101,10 +97,8 @@ def get_tags(id=None):
     if id is None:
         return jsonify(TagService.get_all(page, count))
 
-    # get only processes from specified server
-    filters = (Tag.server_id == id)
-
-    return jsonify(TagService.get_all(page, count, filters))
+    # get only tags from specified server
+    return jsonify(TagService.get_all(page, count, {'server_id': id}))
 
 
 @api_bp.route('/records', methods=['GET'])
@@ -120,10 +114,8 @@ def get_records():
     if id is None:
         return jsonify(RecordService.get_all(page, count))
 
-    # get only processes from specified server
-    filters = (Record.tag_id == id)
-
-    return jsonify(RecordService.get_all(page, count, filters))
+    # get only records from specified tag
+    return jsonify(RecordService.get_all(page, count, {'tag_id': id}))
 
 
 # ----> GET SINGLE <-----

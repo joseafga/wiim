@@ -21,11 +21,10 @@ class BaseService():
     schema -- marshmallow schema class (required)
     """
 
-    def __init__(self, name, model, schema, relation=None):
+    def __init__(self, name, model, schema):
         self.name = name
         self.Model = model
         self.Schema = schema
-        self.Relation = relation
 
     def create(self, *args, **kwargs):
         """ Create a new entry """
@@ -45,6 +44,7 @@ class BaseService():
         keyword arguments:
         page -- page number (default 1)
         count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        filters -- filters for sqlalchemy (default None)
         """
         items_schema = self.Schema(many=True)
 
@@ -52,12 +52,15 @@ class BaseService():
         if not count or count > app.config['WIIM_COUNT_LIMIT']:
             count = app.config['WIIM_COUNT_LIMIT']
 
-        # apply filters or not
-        if filters is None:
-            items = self.Model.query.paginate(page, count).items
-        else:
-            items = self.Model.query.filter(filters).paginate(page, count).items
+        query = self.Model.query
 
+        # apply filters or not
+        if filters is not None:
+            # for attr, value in filters.iteritems():
+            #     query = query.filter(getattr(self.Model, attr) == value)
+            query = query.filter_by(**filters)  # smart filter by kwargs
+
+        items = query.paginate(page, count).items
         items = items_schema.dump(items).data
 
         return {self.name[1]: items}
@@ -143,8 +146,8 @@ class SinceService(BaseService):
 
 # Initialize services
 SiteService = BaseService(('Site', 'Sites'), Site, SiteSchema)
-ZoneService = BaseService(('Zone', 'Zones'), Zone, ZoneSchema, Site)
-ProcessService = BaseService(('Process', 'Processes'), Process, ProcessSchema, Zone)
+ZoneService = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
+ProcessService = BaseService(('Process', 'Processes'), Process, ProcessSchema)
 ServerService = BaseService(('Server', 'Servers'), Server, ServerSchema)
-TagService = SinceService(('Tag', 'Tags'), Tag, TagSchema, Server)
-RecordService = BaseService(('Record', 'Records'), Record, RecordSchema, Tag)
+TagService = SinceService(('Tag', 'Tags'), Tag, TagSchema)
+RecordService = BaseService(('Record', 'Records'), Record, RecordSchema)
