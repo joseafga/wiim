@@ -31,9 +31,14 @@ def routes():
     import urllib
 
     output = []
+    count = 0
+
     for rule in app.url_map.iter_rules():
+        count += 1
         methods = ','.join(rule.methods)
-        line = urllib.parse.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, rule))
+        line = urllib.parse.unquote(
+            "{:3}. {:40s} {:20s} {}".format(count, rule.endpoint, methods, rule)
+        )
         output.append(line)
 
     for line in sorted(output):
