@@ -26,7 +26,7 @@ class Site(db.Model):
     name = db.Column(db.String(64), nullable=False)
     comment = db.Column(db.String(120), nullable=False)
     # foreign key: one site have many zones
-    zones = db.relationship('Zone', backref='site', lazy='dynamic')
+    zones = db.relationship('Zone', backref='site')
 
     def __repr__(self):
         return '<Site {}>'.format(self.id)
@@ -41,7 +41,7 @@ class Zone(db.Model):
     # foreign key: one zone have one site
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'), nullable=False)
     # foreign key: one zone have many processes
-    processes = db.relationship('Process', backref='zone', lazy='dynamic')
+    processes = db.relationship('Process', backref='zone')
 
     def __repr__(self):
         return '<Zone {}>'.format(self.id)
@@ -65,7 +65,7 @@ class Process(db.Model):
     zone_id = db.Column(db.Integer, db.ForeignKey('zone.id'), nullable=False)
     # zone = db.relationship('Zone')
     # foreign key: one process have many tags
-    tags = db.relationship('Tag', secondary=process_tags, lazy='dynamic')
+    tags = db.relationship('Tag', secondary=process_tags, backref='process')
 
     def __repr__(self):
         return '<Process {}>'.format(self.id)
@@ -77,7 +77,7 @@ class Server(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.String(64), nullable=False)
     # foreign key: one server have many tags
-    tags = db.relationship('Tag', backref='server', lazy='dynamic')
+    tags = db.relationship('Tag', backref='server')
 
     def __repr__(self):
         return '<Server {}>'.format(self.id)
@@ -96,7 +96,7 @@ class Tag(db.Model):
     server_id = db.Column(db.Integer, db.ForeignKey('server.id'), nullable=False)
     # server = db.relationship('Server')
     # foreign key: one tag have many records
-    records = db.relationship('Record', backref='tag', lazy='dynamic')
+    records = db.relationship('Record', backref='tag')
 
     def __repr__(self):
         return '<Tag {}>'.format(self.id)
@@ -203,5 +203,5 @@ class TagRecordsSchema(ma.ModelSchema):
         # fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
         model = Tag
 
-    record = fields.Nested(RecordSchema)
+    # record = fields.Nested(RecordSchema)
     # tags = fields.Nested(TagSchema)

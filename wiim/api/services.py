@@ -7,7 +7,7 @@ Include Models management for API
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
-from flask import current_app as app
+from flask import abort, current_app as app
 # application imports
 from .models import *
 
@@ -104,10 +104,17 @@ class TagService(BaseService):
     def __init__(self, *args, **kwargs):
         super(TagService, self).__init__(*args, **kwargs)
 
-    def create(self, name, alias, comment, unit, icon, server_id, processes):
+    def create(self, *args, **kwargs):
         """ Create a new Model """
-        tag = Tag(name=name, alias=alias, comment=comment,
-                  unit=unit, icon=icon, server_id=server_id)
+        # get processes field
+        if 'processes' in kwargs:
+            processes = kwargs['processes']
+            del kwargs['processes']
+        else:
+            # raise error
+            raise ValueError('Require Processes of the Tag')
+
+        tag = Tag(*args, **kwargs)
 
         for process_id in processes:
             process = Process.query.get(process_id)
@@ -122,6 +129,36 @@ class TagService(BaseService):
         return dict(success={
             'message': self.name[0] + ' was created successfully!'
         })  # created
+
+    def get_by_process(self, page=1, count=0, filters=None):
+        """ Get all tags from specified process
+
+        keyword arguments:
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        filters -- filters for sqlalchemy (default None)
+        """
+        items_schema = TagSchema(many=True)
+
+        # limit fetch quantity
+        if not count or count > app.config['WIIM_COUNT_LIMIT']:
+            count = app.config['WIIM_COUNT_LIMIT']
+
+        # query = Process.query.join(Process.tags)
+        # query = Process.query.filter(Process.tags.any(**filters)).all()
+        query = Tag.query.filter(Tag.process.any(**filters))
+
+        # apply filters or not
+        if filters is not None:
+            # for attr, value in filters.iteritems():
+            #     query = query.filter(getattr(self.Model, attr) == value)
+            # query = query.filter_by(**filters)  # smart filter by kwargs
+            pass
+
+        items = query.paginate(page, count).items
+        items = items_schema.dump(items).data
+
+        return {self.name[1]: items}
 
     def since(self):
         session = db.session

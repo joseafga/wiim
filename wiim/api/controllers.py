@@ -84,7 +84,6 @@ def get_servers():
 
 
 @api_bp.route('/tags', methods=['GET'])
-@api_bp.route('/process/<int:id>/tags', methods=['GET'])
 @api_bp.route('/servers/<int:id>/tags', methods=['GET'])
 @cache.cached()
 def get_tags(id=None):
@@ -99,6 +98,19 @@ def get_tags(id=None):
 
     # get only tags from specified server
     return jsonify(tag_service.get_all(page, count, {'server_id': id}))
+
+
+@api_bp.route('/process/<int:id>/tags', methods=['GET'])
+@cache.cached()
+def get_process_tags(id):
+    """ Get all tags from process """
+    # pagination page, only positive values
+    page = int(request.args.get('page', 1))
+    # number of results displayed
+    count = int(request.args.get('count', 0))
+
+    # get only tags from specified process
+    return jsonify(tag_service.get_by_process(page, count, {'id': id}))
 
 
 @api_bp.route('/records', methods=['GET'])
@@ -211,8 +223,8 @@ def create_server():
 def create_tag(server_id):
     """ Create a new Tag """
     # checks request exists and have title attribute
-    if not request.json or not {'name', 'alias', 'processes'}.issubset(set(request.json)):
-        abort(400)  # bad request error
+    # if not request.json or not {'name', 'alias', 'processes'}.issubset(set(request.json)):
+    #     abort(400)  # bad request error
 
     # set server id
     request.json['server_id'] = server_id
