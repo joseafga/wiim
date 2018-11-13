@@ -188,7 +188,7 @@ class ProcessSchema(ma.ModelSchema):
 
     class Meta:
         # Fields to expose
-        fields = ('id', 'name', 'comment', 'tags')
+        # fields = ('id', 'name', 'comment', 'tags')
         model = Process
 
     # zone = fields.Nested(ZoneSchema)
