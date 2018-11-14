@@ -203,5 +203,5 @@ class TagRecordsSchema(ma.ModelSchema):
         # fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
         model = Tag
 
-    # record = fields.Nested(RecordSchema)
+    # records = fields.Nested(RecordSchema)
     # tags = fields.Nested(TagSchema)

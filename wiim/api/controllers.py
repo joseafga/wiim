@@ -186,7 +186,7 @@ def create_site():
     return jsonify(site_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('sites/<int:site_id>/zones', methods=['POST'])
+@api_bp.route('/sites/<int:site_id>/zones', methods=['POST'])
 def create_zone(site_id):
     """ Create a new Zone """
     # checks request exists and have title attribute
@@ -199,12 +199,15 @@ def create_zone(site_id):
     return jsonify(zone_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('/processes', methods=['POST'])
-def create_process():
+@api_bp.route('/zones/<int:zone_id>/processes', methods=['POST'])
+def create_process(zone_id):
     """ Create a new Tag """
     # checks request exists and have title attribute
-    if not request.json or not {'name', 'zone_id'}.issubset(set(request.json)):
+    if not request.json or not {'name'}.issubset(set(request.json)):
         abort(400)  # bad request error
+
+    # set zone id
+    request.json['zone_id'] = zone_id
 
     return jsonify(process_service.create(**request.json)), 201  # created
 
@@ -232,12 +235,15 @@ def create_tag(server_id):
     return jsonify(tag_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('/records', methods=['POST'])
-def create_record():
+@api_bp.route('/tags/<int:tag_id>/records', methods=['POST'])
+def create_record(tag_id):
     """ Create a new Record """
     # checks request exists and have title attribute
-    if not request.json or not {'time_opc', 'value', 'tag_id'}.issubset(set(request.json)):
+    if not request.json or not {'time_opc', 'value'}.issubset(set(request.json)):
         abort(400)  # bad request error
+
+    # set tag id
+    request.json['tag_id'] = tag_id
 
     return jsonify(record_service.create(**request.json)), 201  # created
 
@@ -282,7 +288,7 @@ def destroy_record(id):
 
 # ----> QRCODE <-----
 
-@api_bp.route('/processes/qrcode/<int:id>', methods=['GET'])
+@api_bp.route('/processes/<int:id>/qrcode', methods=['GET'])
 @cache.cached(timeout=3600)  # cache for 1 hour
 def get_process_qrcode(id):
     """ Get QRCode image for Tag """
@@ -291,7 +297,7 @@ def get_process_qrcode(id):
     return send_file(img, mimetype='image/png')
 
 
-@api_bp.route('/tags/qrcode/<int:id>', methods=['GET'])
+@api_bp.route('/tags/<int:id>/qrcode', methods=['GET'])
 @cache.cached(timeout=3600)  # cache for 1 hour
 def get_tag_qrcode(id):
     """ Get QRCode image for Tag """

@@ -160,22 +160,25 @@ class TagService(BaseService):
         return {self.name[1]: items}
 
     def since(self):
-        session = db.session
+        # session = db.session
+        time = 0
 
         tag_records_schema = TagRecordsSchema(many=True)
-        tag_records = session.query(Tag, Record).filter(Tag.id == Record.tag_id).all()
+        query = Tag.query.filter(Tag.records.any(Record.time_db > time))
+        items = query.all()
+        # tag_records = session.query(Tag, Record).filter(Tag.id == Record.tag_id).all()
         # tag_records = Tag.query.all()
-        tags = []
-        for x, y in tag_records:
-            x.record = y
-            tags.append(x)
+        # tags = []
+        # for x, y in tag_records:
+        #     x.record = y
+        #     tags.append(x)
 
-        data, errors = tag_records_schema.dump(tags)
+        items = tag_records_schema.dump(items)
         # data = tag_records_schema.dump(tag_records).data
         # print(tag_records)
         # result = tag_records_schema.dump(tag_records).data
 
-        return data
+        return {self.name[1]: items}
 
         # return item
 
