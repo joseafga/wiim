@@ -117,7 +117,7 @@ class TagService(BaseService):
         """ Create a new Model """
         # get processes field
         if 'processes' in kwargs:
-            processes = kwargs['processes']
+            procs = kwargs['processes']
             del kwargs['processes']
         else:
             # raise error
@@ -133,23 +133,21 @@ class TagService(BaseService):
         # create new tag
         tag = Tag(**kwargs)
 
-        for process_id in processes:
-            process = Process.query.get(process_id)
-            # set tag to related process
+        # query related processes
+        processes = Process.query.filter(Process.id.in_(procs)).all()
+        # set tag to process
+        for process in processes:
             process.tags.append(tag)
-            db.session.add(process)
 
-        # commit to database
+        # add and write
+        db.session.add_all(processes)
         db.session.add(tag)
         db.session.commit()
 
         # get schema to return
         result = item_schema.dump(tag).data
 
-        return dict(success={
-            'message': self.name[0] + ' was created successfully!',
-            'data': result
-        })  # created
+        return {self.name[0]: result}  # created
 
     def get_by_process(self, id, page=1, count=0, filters=None):
         """ Get all tags from specified process
@@ -183,13 +181,15 @@ class TagService(BaseService):
     def since(self):
         # session = db.session
         # time = datetime.datetime(2018, 11, 14, 21, 52, 29)
-        last_id = 64
+        last_id = 95
 
         tags_records_schema = TagRecordsSchema(many=True)
         query = Tag.query
         # query = Record.query.filter(Record.tag_id == 45, Record.id > last_id)
         # query = session.query(Tag, Record).filter(Tag.id == Record.tag_id)
         # tag_records = Tag.query.all()
+
+
         # tags = []
         # for x, y in tag_records:
         #     x.record = y
