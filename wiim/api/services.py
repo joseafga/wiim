@@ -9,6 +9,7 @@ Include Models management for API
 
 import datetime
 from flask import current_app as app
+from sqlalchemy.orm.exc import NoResultFound
 # application imports
 from .models import *
 
@@ -37,7 +38,7 @@ class BaseService():
             raise Exception(errors)
 
         # create new model
-        item = self.Model(*args, **kwargs)
+        item = self.Model(**kwargs)
 
         # commit to database
         db.session.add(item)
@@ -107,7 +108,7 @@ class BaseService():
 
 
 class TagService(BaseService):
-    """ Add since methods to Base"""
+    """ Tags methods with Base Service """
 
     def __init__(self, *args, **kwargs):
         super(TagService, self).__init__(*args, **kwargs)
@@ -130,7 +131,7 @@ class TagService(BaseService):
             raise Exception("Validation error.")
 
         # create new tag
-        tag = Tag(*args, **kwargs)
+        tag = Tag(**kwargs)
 
         for process_id in processes:
             process = Process.query.get(process_id)
@@ -205,10 +206,26 @@ class TagService(BaseService):
         # return item
 
 
+class RecordService(BaseService):
+    """ Record methods with Base Service """
+
+    def __init__(self, *args, **kwargs):
+        super(RecordService, self).__init__(*args, **kwargs)
+
+    def create(self, *args, **kwargs):
+        """ Create a new entry """
+        # checks if tag id exits
+        if db.session.query(Tag.id).filter_by(id=kwargs['tag_id']).scalar() is None:
+            raise Exception("Have no Tag with id = " + str(kwargs['tag_id']))
+
+        # continue with default method
+        return super(RecordService, self).create(*args, **kwargs)
+
+
 # Initialize services
 site_service = BaseService(('Site', 'Sites'), Site, SiteSchema)
 zone_service = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
 process_service = BaseService(('Process', 'Processes'), Process, ProcessSchema)
 server_service = BaseService(('Server', 'Servers'), Server, ServerSchema)
 tag_service = TagService(('Tag', 'Tags'), Tag, TagSchema)
-record_service = BaseService(('Record', 'Records'), Record, RecordSchema)
+record_service = RecordService(('Record', 'Records'), Record, RecordSchema)
