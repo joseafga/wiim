@@ -7,6 +7,7 @@ Include Models management for API
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
+import datetime
 from flask import current_app as app
 # application imports
 from .models import *
@@ -161,7 +162,7 @@ class TagService(BaseService):
 
     def since(self):
         # session = db.session
-        time = 0
+        time = datetime.date()
 
         tag_records_schema = TagRecordsSchema(many=True)
         query = Tag.query.filter(Tag.records.any(Record.time_db > time))

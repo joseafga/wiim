@@ -12,7 +12,7 @@ from flask_caching import Cache
 from werkzeug.exceptions import HTTPException
 # application imports
 from wiim import qrcode
-from .services import Record, Tag, Server, Process, Zone, Site
+# from .services import Record, Tag, Server, Process, Zone, Site
 from .services import record_service, tag_service, server_service, \
     process_service, zone_service, site_service
 
@@ -116,7 +116,7 @@ def get_process_tags(id):
 @api_bp.route('/records', methods=['GET'])
 @api_bp.route('/tags/<int:id>/records', methods=['GET'])
 @cache.cached()
-def get_records():
+def get_records(id=None):
     """ Return all Records """
     # pagination page, only positive values
     page = int(request.args.get('page', 1))
@@ -186,28 +186,28 @@ def create_site():
     return jsonify(site_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('/sites/<int:site_id>/zones', methods=['POST'])
-def create_zone(site_id):
+@api_bp.route('/sites/<int:id>/zones', methods=['POST'])
+def create_zone(id):
     """ Create a new Zone """
     # checks request exists and have title attribute
     if not request.json or not {'name'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
     # set site id
-    request.json['site_id'] = site_id
+    request.json['site_id'] = id
 
     return jsonify(zone_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('/zones/<int:zone_id>/processes', methods=['POST'])
-def create_process(zone_id):
+@api_bp.route('/zones/<int:id>/processes', methods=['POST'])
+def create_process(id):
     """ Create a new Tag """
     # checks request exists and have title attribute
     if not request.json or not {'name'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
     # set zone id
-    request.json['zone_id'] = zone_id
+    request.json['zone_id'] = id
 
     return jsonify(process_service.create(**request.json)), 201  # created
 
@@ -222,28 +222,28 @@ def create_server():
     return jsonify(server_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('/servers/<int:server_id>/tags', methods=['POST'])
-def create_tag(server_id):
+@api_bp.route('/servers/<int:id>/tags', methods=['POST'])
+def create_tag(id):
     """ Create a new Tag """
     # checks request exists and have title attribute
-    # if not request.json or not {'name', 'alias', 'processes'}.issubset(set(request.json)):
-    #     abort(400)  # bad request error
+    if not request.json or not {'name', 'alias', 'processes'}.issubset(set(request.json)):
+        abort(400)  # bad request error
 
     # set server id
-    request.json['server_id'] = server_id
+    request.json['server_id'] = id
 
     return jsonify(tag_service.create(**request.json)), 201  # created
 
 
-@api_bp.route('/tags/<int:tag_id>/records', methods=['POST'])
-def create_record(tag_id):
+@api_bp.route('/tags/<int:id>/records', methods=['POST'])
+def create_record(id):
     """ Create a new Record """
     # checks request exists and have title attribute
     if not request.json or not {'time_opc', 'value'}.issubset(set(request.json)):
         abort(400)  # bad request error
 
     # set tag id
-    request.json['tag_id'] = tag_id
+    request.json['tag_id'] = id
 
     return jsonify(record_service.create(**request.json)), 201  # created
 
