@@ -179,20 +179,12 @@ def get_record(id):
 @api_bp.route('/sites', methods=['POST'])
 def create_site():
     """ Create a new Site """
-    # checks request exists and have title attribute
-    if not request.json or not {'name'}.issubset(set(request.json)):
-        abort(400)  # bad request error
-
     return jsonify(site_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('/sites/<int:id>/zones', methods=['POST'])
 def create_zone(id):
     """ Create a new Zone """
-    # checks request exists and have title attribute
-    if not request.json or not {'name'}.issubset(set(request.json)):
-        abort(400)  # bad request error
-
     # set site id
     request.json['site_id'] = id
 
@@ -202,10 +194,6 @@ def create_zone(id):
 @api_bp.route('/zones/<int:id>/processes', methods=['POST'])
 def create_process(id):
     """ Create a new Tag """
-    # checks request exists and have title attribute
-    if not request.json or not {'name'}.issubset(set(request.json)):
-        abort(400)  # bad request error
-
     # set zone id
     request.json['zone_id'] = id
 
@@ -215,20 +203,12 @@ def create_process(id):
 @api_bp.route('/servers', methods=['POST'])
 def create_server():
     """ Create a new Server """
-    # checks request exists and have title attribute
-    if not request.json or not {'uid'}.issubset(set(request.json)):
-        abort(400)  # bad request error
-
     return jsonify(server_service.create(**request.json)), 201  # created
 
 
 @api_bp.route('/servers/<int:id>/tags', methods=['POST'])
 def create_tag(id):
     """ Create a new Tag """
-    # checks request exists and have title attribute
-    if not request.json or not {'name', 'alias', 'processes'}.issubset(set(request.json)):
-        abort(400)  # bad request error
-
     # set server id
     request.json['server_id'] = id
 
@@ -238,10 +218,6 @@ def create_tag(id):
 @api_bp.route('/tags/<int:id>/records', methods=['POST'])
 def create_record(id):
     """ Create a new Record """
-    # checks request exists and have title attribute
-    if not request.json or not {'time_opc', 'value'}.issubset(set(request.json)):
-        abort(400)  # bad request error
-
     # set tag id
     request.json['tag_id'] = id
 

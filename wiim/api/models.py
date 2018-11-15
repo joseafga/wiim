@@ -65,7 +65,7 @@ class Process(db.Model):
     zone_id = db.Column(db.Integer, db.ForeignKey('zone.id'), nullable=False)
     # zone = db.relationship('Zone')
     # foreign key: one process have many tags
-    tags = db.relationship('Tag', secondary=process_tags, backref='process')
+    tags = db.relationship('Tag', secondary=process_tags, backref='processes')
 
     def __repr__(self):
         return '<Process {}>'.format(self.id)
@@ -203,5 +203,5 @@ class TagRecordsSchema(ma.ModelSchema):
         # fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
         model = Tag
 
-    # records = fields.Nested(RecordSchema)
+    records = fields.Nested(RecordSchema, many=True)
     # tags = fields.Nested(TagSchema)

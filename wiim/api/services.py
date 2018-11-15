@@ -29,15 +29,24 @@ class BaseService():
 
     def create(self, *args, **kwargs):
         """ Create a new entry """
+        item_schema = self.Schema()
+
+        # checks required fields
+        data, errors = item_schema.load(kwargs)
+        if errors:
+            raise Exception("Validation error.")
+
+        # create new model
         item = self.Model(*args, **kwargs)
 
         # commit to database
         db.session.add(item)
         db.session.commit()
 
-        return dict(success={
-            'message': self.name[0] + ' was created successfully!'
-        })  # created
+        # get schema to return
+        result = item_schema.dump(item).data
+
+        return {self.name[0]: result}  # created
 
     def get_all(self, page=1, count=0, filters=None):
         """ Get all items from specified relation
@@ -62,9 +71,9 @@ class BaseService():
             query = query.filter_by(**filters)  # smart filter by kwargs
 
         items = query.paginate(page, count).items
-        items = items_schema.dump(items).data
+        result = items_schema.dump(items).data
 
-        return {self.name[1]: items}
+        return {self.name[1]: result}
 
     def get_by_id(self, id):
         """ Get single item by id
@@ -75,9 +84,9 @@ class BaseService():
         item_schema = self.Schema()
 
         item = self.Model.query.get(id)
-        item = item_schema.dump(item).data
+        result = item_schema.dump(item).data
 
-        return {self.name[0]: item}
+        return {self.name[0]: result}
 
     def update():
         pass
@@ -94,9 +103,7 @@ class BaseService():
         db.session.delete(item)
         db.session.commit()
 
-        return dict(success={
-            'message': self.name[0] + ' was destroyed successfully!'
-        })  # created
+        return True  # destroyed
 
 
 class TagService(BaseService):
@@ -113,8 +120,16 @@ class TagService(BaseService):
             del kwargs['processes']
         else:
             # raise error
-            raise ValueError('Require Processes of the Tag')
+            raise Exception('Require Processes of the Tag')
 
+        item_schema = self.Schema()
+
+        # checks required fields
+        data, errors = item_schema.load(kwargs)
+        if errors:
+            raise Exception("Validation error.")
+
+        # create new tag
         tag = Tag(*args, **kwargs)
 
         for process_id in processes:
@@ -127,8 +142,12 @@ class TagService(BaseService):
         db.session.add(tag)
         db.session.commit()
 
+        # get schema to return
+        result = item_schema.dump(tag).data
+
         return dict(success={
-            'message': self.name[0] + ' was created successfully!'
+            'message': self.name[0] + ' was created successfully!',
+            'data': result
         })  # created
 
     def get_by_process(self, id, page=1, count=0, filters=None):
@@ -147,7 +166,7 @@ class TagService(BaseService):
 
         # query = Process.query.join(Process.tags)
         # query = Process.query.filter(Process.tags.any(**filters)).all()
-        query = Tag.query.filter(Tag.process.any(Process.id == id))
+        query = Tag.query.filter(Tag.processes.any(Process.id == id))
 
         # apply filters or not
         if filters is not None:
@@ -156,28 +175,30 @@ class TagService(BaseService):
             query = query.filter_by(**filters)  # smart filter by kwargs
 
         items = query.paginate(page, count).items
-        items = items_schema.dump(items).data
+        result = items_schema.dump(items).data
 
-        return {self.name[1]: items}
+        return {self.name[1]: result}
 
     def since(self):
         # session = db.session
-        time = datetime.date()
+        # time = datetime.datetime(2018, 11, 14, 21, 52, 29)
+        last_id = 64
 
-        tag_records_schema = TagRecordsSchema(many=True)
-        query = Tag.query.filter(Tag.records.any(Record.time_db > time))
-        items = query.all()
-        # tag_records = session.query(Tag, Record).filter(Tag.id == Record.tag_id).all()
+        tags_records_schema = TagRecordsSchema(many=True)
+        query = Tag.query
+        # query = Record.query.filter(Record.tag_id == 45, Record.id > last_id)
+        # query = session.query(Tag, Record).filter(Tag.id == Record.tag_id)
         # tag_records = Tag.query.all()
         # tags = []
         # for x, y in tag_records:
         #     x.record = y
         #     tags.append(x)
 
-        items = tag_records_schema.dump(items)
-        # data = tag_records_schema.dump(tag_records).data
+        items = query.paginate(1, 10).items
+        items = tags_records_schema.dump(items).data
+        # data = tags_records_schema.dump(tag_records).data
         # print(tag_records)
-        # result = tag_records_schema.dump(tag_records).data
+        # result = tags_records_schema.dump(tag_records).data
 
         return {self.name[1]: items}
 
