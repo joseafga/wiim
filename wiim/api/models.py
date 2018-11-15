@@ -122,7 +122,8 @@ class Record(db.Model):
 # ----> SCHEMAS <-----
 
 class RecordSchema(ma.ModelSchema):
-    """ docstring for RecordSchema """
+    """ (Des)Serializing Schema for Record """
+    time_db = fields.DateTime(required=False)  # force unrequired
 
     class Meta:
         # Fields to expose
@@ -138,7 +139,7 @@ class RecordSchema(ma.ModelSchema):
 
 
 class TagSchema(ma.ModelSchema):
-    """ docstring for TagSchema """
+    """ (Des)Serializing Schema for Tag """
 
     class Meta:
         # Fields to expose
@@ -149,7 +150,7 @@ class TagSchema(ma.ModelSchema):
 
 
 class ServerSchema(ma.ModelSchema):
-    """ docstring for ServerSchema """
+    """ (Des)Serializing Schema for Server """
 
     class Meta:
         # Fields to expose
@@ -164,7 +165,7 @@ class ServerSchema(ma.ModelSchema):
 
 
 class ZoneSchema(ma.ModelSchema):
-    """ docstring for ZoneSchema """
+    """ (Des)Serializing Schema for Zone """
 
     class Meta:
         # Fields to expose
@@ -173,7 +174,7 @@ class ZoneSchema(ma.ModelSchema):
 
 
 class SiteSchema(ma.ModelSchema):
-    """ docstring for SiteSchema """
+    """ (Des)Serializing Schema for Site """
 
     class Meta:
         # Fields to expose
@@ -184,7 +185,7 @@ class SiteSchema(ma.ModelSchema):
 
 
 class ProcessSchema(ma.ModelSchema):
-    """ docstring for ProcessSchema """
+    """ (Des)Serializing Schema for Process """
 
     class Meta:
         # Fields to expose
@@ -196,7 +197,7 @@ class ProcessSchema(ma.ModelSchema):
 
 
 class TagRecordsSchema(ma.ModelSchema):
-    """ docstring for TagSchema """
+    """ (Des)Serializing Schema for Tag """
 
     class Meta:
         # Fields to expose

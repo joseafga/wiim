@@ -34,7 +34,7 @@ class BaseService():
         # checks required fields
         data, errors = item_schema.load(kwargs)
         if errors:
-            raise Exception("Validation error.")
+            raise Exception(errors)
 
         # create new model
         item = self.Model(*args, **kwargs)

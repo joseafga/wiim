@@ -298,11 +298,15 @@ def handle_error(e):
     if isinstance(e, HTTPException):
         return make_response(jsonify(error={
             'code': str(e.code),
-            'name': e.name,
-            'message': e.description
+            'messages': {
+                e.name: e.description
+            }
         }), e.code)
+
+    # checks if errors have dict argument
+    msgs = e.args[0] if type(e.args[0]) is dict else str(e)
 
     # default error with bad request code
     return make_response(jsonify(error={
-        'msg': str(e)
+        'messages': msgs
     }), 400)
