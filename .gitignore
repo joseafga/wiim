@@ -1,5 +1,7 @@
 # Wiim
 .idea/
+.vscode/
+.sublime/
 captures/
 .directory
 
