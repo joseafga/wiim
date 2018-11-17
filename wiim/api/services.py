@@ -9,7 +9,6 @@ Include Models management for API
 
 import datetime
 from flask import current_app as app
-from sqlalchemy.orm.exc import NoResultFound
 # application imports
 from .models import *
 
@@ -18,13 +17,11 @@ class BaseService():
     """ Base service class
 
     keyword arguments:
-    name -- tuple with (singular, plural) names(required)
     model -- model class (required)
     schema -- marshmallow schema class (required)
     """
 
-    def __init__(self, name, model, schema):
-        self.name = name
+    def __init__(self, model, schema):
         self.Model = model
         self.Schema = schema
 
@@ -47,7 +44,7 @@ class BaseService():
         # get schema to return
         result = item_schema.dump(item).data
 
-        return {self.name[0]: result}  # created
+        return result  # created
 
     def get_all(self, page=1, count=0, filters=None):
         """ Get all items from specified relation
@@ -74,7 +71,7 @@ class BaseService():
         items = query.paginate(page, count).items
         result = items_schema.dump(items).data
 
-        return {self.name[1]: result}
+        return result
 
     def get_by_id(self, id):
         """ Get single item by id
@@ -87,7 +84,7 @@ class BaseService():
         item = self.Model.query.get(id)
         result = item_schema.dump(item).data
 
-        return {self.name[0]: result}
+        return result
 
     def update():
         pass
@@ -147,7 +144,7 @@ class TagService(BaseService):
         # get schema to return
         result = item_schema.dump(tag).data
 
-        return {self.name[0]: result}  # created
+        return result  # created
 
     def get_by_process(self, id, page=1, count=0, filters=None):
         """ Get all tags from specified process
@@ -176,32 +173,40 @@ class TagService(BaseService):
         items = query.paginate(page, count).items
         result = items_schema.dump(items).data
 
-        return {self.name[1]: result}
+        return result
 
     def since(self):
-        # session = db.session
+        session = db.session
         # time = datetime.datetime(2018, 11, 14, 21, 52, 29)
-        last_id = 95
+        last_id = 80
 
         tags_records_schema = TagRecordsSchema(many=True)
-        query = Tag.query
+        # query = Tag.query
         # query = Record.query.filter(Record.tag_id == 45, Record.id > last_id)
-        # query = session.query(Tag, Record).filter(Tag.id == Record.tag_id)
+        query = session.query(Tag, Record).filter(Tag.id == Record.tag_id)
+        # query = session.query(Tag).join(Record).filter(Tag.id == Record.tag_id, Record.id > last_id)
         # tag_records = Tag.query.all()
+        items = query.order_by(Record.time_db.asc()).limit(20).all()
+
+        print(items)
+        # for item in items:
+        #     print(item.records)
+
+        tags = []
+        for x, y in items:
+            x.records = []
+            x.records.append(y)
+            tags.append(x)
+
+        items = tags
 
 
-        # tags = []
-        # for x, y in tag_records:
-        #     x.record = y
-        #     tags.append(x)
-
-        items = query.paginate(1, 10).items
         items = tags_records_schema.dump(items).data
         # data = tags_records_schema.dump(tag_records).data
         # print(tag_records)
         # result = tags_records_schema.dump(tag_records).data
 
-        return {self.name[1]: items}
+        return items
 
         # return item
 
@@ -223,9 +228,9 @@ class RecordService(BaseService):
 
 
 # Initialize services
-site_service = BaseService(('Site', 'Sites'), Site, SiteSchema)
-zone_service = BaseService(('Zone', 'Zones'), Zone, ZoneSchema)
-process_service = BaseService(('Process', 'Processes'), Process, ProcessSchema)
-server_service = BaseService(('Server', 'Servers'), Server, ServerSchema)
-tag_service = TagService(('Tag', 'Tags'), Tag, TagSchema)
-record_service = RecordService(('Record', 'Records'), Record, RecordSchema)
+site_service = BaseService(Site, SiteSchema)
+zone_service = BaseService(Zone, ZoneSchema)
+process_service = BaseService(Process, ProcessSchema)
+server_service = BaseService(Server, ServerSchema)
+tag_service = TagService(Tag, TagSchema)
+record_service = RecordService(Record, RecordSchema)
