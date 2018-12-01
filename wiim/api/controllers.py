@@ -100,7 +100,7 @@ def get_tags(id=None):
     return jsonify(tag_service.get_all(page, count, {'server_id': id}))
 
 
-@api_bp.route('/process/<int:id>/tags', methods=['GET'])
+@api_bp.route('/processes/<int:id>/tags', methods=['GET'])
 @cache.cached()
 def get_process_tags(id):
     """ Get all tags from process """
