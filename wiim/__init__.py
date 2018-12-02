@@ -9,7 +9,8 @@ Wiim Industrial Information Management
 
 __version__ = '0.0.1'
 
-from flask import Flask
+import os
+from flask import Flask, send_from_directory
 
 
 def create_app(config_filename):
@@ -24,6 +25,15 @@ def create_app(config_filename):
     # initialize modules
     with app.app_context():
         api.init_app(app)
+
+        # set favicon icon
+        @app.route('/favicon.ico')
+        def favicon():
+            return send_from_directory(
+                os.path.join(app.root_path, 'static/images'),
+                'favicon.ico',
+                mimetype='image/vnd.microsoft.icon'
+            )
 
     # import modules blueprints
     # from wiim.api.controllers import mod_api
