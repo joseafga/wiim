@@ -12,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import mysql
 from marshmallow import fields
 from flask_marshmallow import Marshmallow
+from flask import current_app as app
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -121,32 +122,36 @@ class Record(db.Model):
 
 # ----> SCHEMAS <-----
 
-class RecordSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Record """
-    time_db = fields.DateTime(required=False)  # force unrequired
+class SiteSchema(ma.ModelSchema):
+    """ (Des)Serializing Schema for Site """
 
     class Meta:
         # Fields to expose
-        # fields = ('time_opc', 'time_db', 'value', 'quality', 'tag')
-        model = Record
-
-    # tag = fields.Nested(TagSchema)
-
-    # Smart hyperlinking
-    # _links = ma.Hyperlinks({
-    #     'self': ma.URLFor('tag_detail', id='<id>')
-    # })
+        # fields = ('name', 'comment', 'zones')
+        model = Site
 
 
-class TagSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Tag """
+class ZoneSchema(ma.ModelSchema):
+    """ (Des)Serializing Schema for Zone """
 
     class Meta:
         # Fields to expose
-        # fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
-        model = Tag
+        # fields = ('name', 'comment', 'site')
+        model = Zone
 
-    # server = fields.Nested(ServerSchema)
+    site = fields.Nested(SiteSchema)
+
+
+class ProcessSchema(ma.ModelSchema):
+    """ (Des)Serializing Schema for Process """
+
+    class Meta:
+        # Fields to expose
+        # fields = ('id', 'name', 'comment', 'tags')
+        model = Process
+
+    zone = fields.Nested(ZoneSchema)
+    # tags = fields.Nested(TagSchema, many=True)
 
 
 class ServerSchema(ma.ModelSchema):
@@ -164,36 +169,34 @@ class ServerSchema(ma.ModelSchema):
     # })
 
 
-class ZoneSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Zone """
+class TagSchema(ma.ModelSchema):
+    """ (Des)Serializing Schema for Tag """
+    exclude = ['processes', 'records']
 
     class Meta:
         # Fields to expose
-        # fields = ('name', 'comment', 'site')
-        model = Zone
+        fields = ('id', 'name', 'alias', 'comment', 'unit', 'icon', 'server')
+        model = Tag
+
+    # server = fields.Nested(ServerSchema)
+    icon = fields.Function(lambda tag: tag.icon.lower())
 
 
-class SiteSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Site """
-
-    class Meta:
-        # Fields to expose
-        # fields = ('name', 'comment', 'zones')
-        model = Site
-
-    # zones = fields.Nested(ZoneSchema, many=True)
-
-
-class ProcessSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Process """
+class RecordSchema(ma.ModelSchema):
+    """ (Des)Serializing Schema for Record """
+    time_db = fields.DateTime(required=False)  # force unrequired
 
     class Meta:
         # Fields to expose
-        # fields = ('id', 'name', 'comment', 'tags')
-        model = Process
+        # fields = ('time_opc', 'time_db', 'value', 'quality', 'tag')
+        model = Record
 
-    # zone = fields.Nested(ZoneSchema)
-    # tags = fields.Nested(TagSchema, many=True)
+    # tag = fields.Nested(TagSchema)
+
+    # Smart hyperlinking
+    # _links = ma.Hyperlinks({
+    #     'self': ma.URLFor('tag_detail', id='<id>')
+    # })
 
 
 class TagRecordsSchema(ma.ModelSchema):

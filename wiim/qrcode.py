@@ -11,7 +11,7 @@ import qrcode
 from PIL import Image
 from io import BytesIO
 
-logo = Image.open('wiim/static/images/logo/wiim_boxborder.png')
+logo = Image.open('wiim/static/images/icons/96/logo/wiim_boxborder.png')
 logo = logo.convert("RGBA")
 
 

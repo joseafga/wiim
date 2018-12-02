@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg1696"
+   version="1.1"
+   viewBox="0 0 132.87636 63.019161"
+   height="63.019161mm"
+   width="132.87636mm">
+  <defs
+     id="defs1690" />
+  <metadata
+     id="metadata1693">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-21.252299,-112.03209)"
+     id="layer1">
+    <g
+       transform="matrix(0.35277777,0,0,-0.35277777,92.03695,131.67193)"
+       id="g36">
+      <path
+         id="path38"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="m 0,0 39,-0.062 19.848,-65.718 0.5,-0.001 29.942,121.453 39.75,-0.062 46.968,-178.575 -39.25,0.062 -28.058,121.545 -0.5,0.001 -31.192,-121.452 -36.75,0.059 -20.096,67.218 -0.5,10e-4 -16.403,-67.386 -38.5,0.061 z" />
+    </g>
+    <g
+       transform="matrix(0.35277777,0,0,-0.35277777,76.46202,175.05118)"
+       id="g40">
+      <path
+         id="path42"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="m 0,0 h -39 l -15.738,65.903 h -0.5 L -69.5,0 h -39.75 l -47.25,178.5 h 39.25 L -89,57 h 0.5 l 15.512,65.903 h 36.75 L -20.25,55.5 h 0.5 l 16.512,67.403 h 36.346 z" />
+    </g>
+    <g
+       transform="matrix(0.35277777,0,0,-0.35277777,104.11581,112.42229)"
+       id="g44">
+      <path
+         id="path46"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="m 0,0 c -12.612,3.151 -25.102,-4.552 -28.192,-16.921 -3.091,-12.37 4.308,-25.041 16.921,-28.192 12.369,-3.091 25.101,4.55 28.192,16.921 C 20.011,-15.823 12.369,-3.091 0,0" />
+    </g>
+    <path
+       id="path50"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.35277775"
+       d="m 85.94775,112.42229 c -4.44923,-1.1116 -8.85542,1.60585 -9.94551,5.96935 -1.09043,4.36386 1.51977,8.83391 5.96935,9.94551 4.36351,1.09044 8.85508,-1.60513 9.94552,-5.96935 1.09008,-4.36351 -1.60585,-8.85507 -5.96936,-9.94551" />
+  </g>
+</svg>
