@@ -7,11 +7,13 @@ Generate QRCode
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
+import os
 import qrcode
 from PIL import Image
 from io import BytesIO
 
-logo = Image.open('wiim/static/images/icons/96/logo/wiim_boxborder.png')
+dirname = os.path.dirname(__file__)
+logo = Image.open(os.path.join(dirname, 'static/images/icons/96/logo/wiim_boxborder.png'))
 logo = logo.convert("RGBA")
 
 
