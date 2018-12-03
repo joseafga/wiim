@@ -221,7 +221,7 @@ class RecordService(BaseService):
         """ Create a new entry """
         # checks if tag id exits
         if db.session.query(Tag.id).filter_by(id=kwargs['tag_id']).scalar() is None:
-            raise Exception("Have no Tag with id = " + str(kwargs['tag_id']))
+            raise Exception("Have no Tag with id equal " + str(kwargs['tag_id']))
 
         # continue with default method
         return super(RecordService, self).create(*args, **kwargs)
