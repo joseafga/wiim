@@ -13,7 +13,7 @@ from PIL import Image
 from io import BytesIO
 
 dirname = os.path.dirname(__file__)
-logo = Image.open(os.path.join(dirname, 'static/images/icons/96/logo/wiim_boxborder.png'))
+logo = Image.open(os.path.join(dirname, 'static/icons/96/wiim_boxborder.png'))
 logo = logo.convert("RGBA")
 
 

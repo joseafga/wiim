@@ -12,7 +12,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import mysql
 from marshmallow import fields
 from flask_marshmallow import Marshmallow
-from flask import current_app as app
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -175,11 +174,15 @@ class TagSchema(ma.ModelSchema):
 
     class Meta:
         # Fields to expose
-        fields = ('id', 'name', 'alias', 'comment', 'unit', 'icon', 'server')
+        fields = ('id', 'name', 'alias', 'comment', 'unit', 'icon', 'icon_url', 'server')
         model = Tag
 
     # server = fields.Nested(ServerSchema)
-    icon = fields.Function(lambda tag: tag.icon.lower())
+    icon_url = fields.Method('get_icon_url')
+
+    def get_icon_url(self, tag):
+        if tag.icon:
+            return '/static/icons/96/{}.png'.format(tag.icon.lower())
 
 
 class RecordSchema(ma.ModelSchema):

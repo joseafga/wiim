@@ -9,8 +9,9 @@ class Config(object):
     CACHE_TYPE = 'simple'
     # Maximum items to fetch in paginate
     WIIM_COUNT_LIMIT = 100
-    # Folder icons path
-    WIIM_IMAGES_PATH = '/static/images/'
+    # Path of icons and upload folders
+    WIIM_ICONS_FOLDER = 'static/icons'
+    WIIM_UPLOAD_FOLDER = 'static/upload'
     # SQLAlchemy options
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # application processor threads

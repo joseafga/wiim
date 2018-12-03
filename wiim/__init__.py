@@ -22,18 +22,22 @@ def create_app(config_filename):
 
     # import modules
     from wiim import api
-    # initialize modules
-    with app.app_context():
-        api.init_app(app)
 
-        # set favicon icon
+    # initialize modules and default routes
+    with app.app_context():
+        # set app folders routes
         @app.route('/favicon.ico')
         def favicon():
             return send_from_directory(
-                os.path.join(app.root_path, 'static/images'),
-                'favicon.ico',
-                mimetype='image/vnd.microsoft.icon'
-            )
+                os.path.join(app.root_path, 'static'),
+                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+        @app.route('/uploads/<path:filename>')
+        def get_uploaded_file(filename):
+            return send_from_directory(app.config['WIIM_UPLOAD_FOLDER'], filename)
+
+        # initialize API module
+        api.init_app(app)
 
     # import modules blueprints
     # from wiim.api.controllers import mod_api
