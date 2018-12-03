@@ -29,9 +29,8 @@ api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 @cache.cached()
 def get_sites():
     """ Get all Sites """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     return jsonify(site_service.get_all(page, count))
@@ -42,9 +41,8 @@ def get_sites():
 @cache.cached()
 def get_zones(id=None):
     """ Get all Zones """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     if id is None:
@@ -59,9 +57,8 @@ def get_zones(id=None):
 @cache.cached()
 def get_processes(id=None):
     """ Get all Processes """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     if id is None:
@@ -75,9 +72,8 @@ def get_processes(id=None):
 @cache.cached()
 def get_servers():
     """ Get all Servers """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     return jsonify(server_service.get_all(page, count))
@@ -88,9 +84,8 @@ def get_servers():
 @cache.cached()
 def get_tags(id=None):
     """ Get all Tags """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     if id is None:
@@ -104,9 +99,8 @@ def get_tags(id=None):
 @cache.cached()
 def get_process_tags(id):
     """ Get all tags from process """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     # get only tags from specified process
@@ -118,9 +112,8 @@ def get_process_tags(id):
 @cache.cached()
 def get_records(id=None):
     """ Return all Records """
-    # pagination page, only positive values
+    # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
-    # number of results displayed
     count = int(request.args.get('count', 0))
 
     if id is None:
