@@ -8,6 +8,7 @@ using collation utf8mb4_unicode_ci
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
+from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import mysql
 from marshmallow import fields
@@ -182,7 +183,8 @@ class TagSchema(ma.ModelSchema):
 
     def get_icon_url(self, tag):
         if tag.icon:
-            return '/static/icons/96/{}.png'.format(tag.icon.lower())
+            # return url_for('static', filename='icons/96/{}.png'.format(tag.icon.lower()))
+            return '{}static/icons/96/{}.png'.format(request.url_root, tag.icon.lower())
 
 
 class RecordSchema(ma.ModelSchema):
