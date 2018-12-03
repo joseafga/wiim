@@ -7,7 +7,7 @@ Include routes management for API
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
-from flask import Blueprint, make_response, abort, request, send_file, jsonify
+from flask import Blueprint, make_response, request, send_file, jsonify
 from flask_caching import Cache
 from werkzeug.exceptions import HTTPException
 # application imports
