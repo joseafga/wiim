@@ -51,8 +51,8 @@ class Zone(db.Model):
 process_tags = db.Table(
     # many to many table
     'process_tags',
-    db.Column('process_id', db.Integer, db.ForeignKey('process.id'), primary_key=True),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+    db.Column('process_id', db.Integer, db.ForeignKey('process.id')),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'))
 )
 
 
@@ -139,7 +139,7 @@ class ZoneSchema(ma.ModelSchema):
         # fields = ('name', 'comment', 'site')
         model = Zone
 
-    site = fields.Nested(SiteSchema)
+    site = fields.Nested(SiteSchema, exclude=('zones',))
 
 
 class ProcessSchema(ma.ModelSchema):
@@ -150,7 +150,7 @@ class ProcessSchema(ma.ModelSchema):
         # fields = ('id', 'name', 'comment', 'tags')
         model = Process
 
-    zone = fields.Nested(ZoneSchema)
+    zone = fields.Nested(ZoneSchema, exclude=('site', 'processes'))
     # tags = fields.Nested(TagSchema, many=True)
 
 

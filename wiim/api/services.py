@@ -46,10 +46,11 @@ class BaseService():
 
         return result  # created
 
-    def get_all(self, page=1, count=0, filters=None):
+    def get_query(self, query, page=1, count=0, filters=None):
         """ Get all items from specified relation
 
         keyword arguments:
+        query -- SQLAlchemy query object
         page -- page number (default 1)
         count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
         filters -- filters for sqlalchemy (default None)
@@ -59,8 +60,6 @@ class BaseService():
         # limit fetch quantity
         if not count or count > app.config['WIIM_COUNT_LIMIT']:
             count = app.config['WIIM_COUNT_LIMIT']
-
-        query = self.Model.query
 
         # apply filters or not
         if filters is not None:
@@ -72,6 +71,18 @@ class BaseService():
         result = items_schema.dump(items).data
 
         return result
+
+    def get_all(self, page=1, count=0, filters=None):
+        """ Get all items from specified relation
+
+        keyword arguments:
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        filters -- filters for sqlalchemy (default None)
+        """
+        query = self.Model.query
+
+        return self.get_query(query, page, count, filters)
 
     def get_by_id(self, id):
         """ Get single item by id
@@ -146,34 +157,18 @@ class TagService(BaseService):
 
         return result  # created
 
-    def get_by_process(self, id, page=1, count=0, filters=None):
+    def get_by_process(self, process_id, page=1, count=0, filters=None):
         """ Get all tags from specified process
 
         keyword arguments:
+        process_id -- process id (required)
         page -- page number (default 1)
         count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
         filters -- filters for sqlalchemy (default None)
         """
-        items_schema = TagSchema(many=True)
+        query = Tag.query.filter(Tag.processes.any(Process.id == process_id))
 
-        # limit fetch quantity
-        if not count or count > app.config['WIIM_COUNT_LIMIT']:
-            count = app.config['WIIM_COUNT_LIMIT']
-
-        # query = Process.query.join(Process.tags)
-        # query = Process.query.filter(Process.tags.any(**filters)).all()
-        query = Tag.query.filter(Tag.processes.any(Process.id == id))
-
-        # apply filters or not
-        if filters is not None:
-            # for attr, value in filters.iteritems():
-            #     query = query.filter(getattr(self.Model, attr) == value)
-            query = query.filter_by(**filters)  # smart filter by kwargs
-
-        items = query.paginate(page, count).items
-        result = items_schema.dump(items).data
-
-        return result
+        return self.get_query(query, page, count, filters)
 
     def since(self):
         session = db.session
@@ -200,7 +195,6 @@ class TagService(BaseService):
 
         items = tags
 
-
         items = tags_records_schema.dump(items).data
         # data = tags_records_schema.dump(tag_records).data
         # print(tag_records)
@@ -225,6 +219,21 @@ class RecordService(BaseService):
 
         # continue with default method
         return super(RecordService, self).create(*args, **kwargs)
+
+    def get_by_tags(self, tags, page=1, count=0, filters=None):
+        """ Get all records from a tags list
+
+        keyword arguments:
+        tags -- list with tags id (required)
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        filters -- filters for sqlalchemy (default None)
+        """
+
+        # get records with tags id
+        query = Record.query.filter(Record.tag_id.in_(tags))
+
+        return self.get_query(query, page, count, filters)
 
 
 # Initialize services
