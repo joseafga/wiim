@@ -198,7 +198,7 @@ def create_site():
 def create_zone(id):
     """ Create a new Zone """
     # set site id
-    request.json['site_id']=id
+    request.json['site_id'] = id
 
     return jsonify(zone_service.create(**request.json)), 201  # created
 
@@ -207,7 +207,7 @@ def create_zone(id):
 def create_process(id):
     """ Create a new Tag """
     # set zone id
-    request.json['zone_id']=id
+    request.json['zone_id'] = id
 
     return jsonify(process_service.create(**request.json)), 201  # created
 
@@ -222,7 +222,7 @@ def create_server():
 def create_tag(id):
     """ Create a new Tag """
     # set server id
-    request.json['server_id']=id
+    request.json['server_id'] = id
 
     return jsonify(tag_service.create(**request.json)), 201  # created
 
@@ -231,7 +231,7 @@ def create_tag(id):
 def create_record(id):
     """ Create a new Record """
     # set tag id
-    request.json['tag_id']=id
+    request.json['tag_id'] = id
 
     return jsonify(record_service.create(**request.json)), 201  # created
 
@@ -280,7 +280,7 @@ def destroy_record(id):
 @cache.cached(timeout=3600)  # cache for 1 hour
 def get_process_qrcode(id):
     """ Get QRCode image for Tag """
-    img=qrcode.generate('process', id)
+    img = qrcode.generate('process', id)
 
     return send_file(img, mimetype='image/png')
 
@@ -289,7 +289,7 @@ def get_process_qrcode(id):
 @cache.cached(timeout=3600)  # cache for 1 hour
 def get_tag_qrcode(id):
     """ Get QRCode image for Tag """
-    img=qrcode.generate('tag', id)
+    img = qrcode.generate('tag', id)
 
     return send_file(img, mimetype='image/png')
 
@@ -316,7 +316,7 @@ def handle_error(e):
         }), e.code)
 
     # checks if errors have dict argument
-    msgs=e.args[0] if type(e.args[0]) is dict else str(e)
+    msgs = e.args[0] if type(e.args[0]) is dict else str(e)
 
     # default error with bad request code
     return make_response(jsonify(error={
