@@ -7,7 +7,6 @@ Include Models management for API
 :license: CC BY-NC 4.0, see LICENSE for more details.
 """
 
-import datetime
 from flask import current_app as app
 # application imports
 from .models import *
