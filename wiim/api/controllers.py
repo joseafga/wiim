@@ -131,15 +131,16 @@ def get_records(id=None):
 
 
 @api_bp.route('/processes/<int:id>/records', methods=['GET'])
-@cache.cached()
 def get_process_records(id=None):
     """ Return all Records from Process """
     # pagination page and number of results displayed
     page = int(request.args.get('page', 1))
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
     # get only records from specified tag
-    return jsonify(record_service.get_by_process(id, page, count))
+    return jsonify(record_service.get_by_process(id, page, count, since_id=since, order_by=order))
 
 
 # ----> GET SINGLE <-----

@@ -24,6 +24,7 @@ class BaseService():
     def __init__(self, model, schema):
         self.Model = model
         self.Schema = schema
+        self.order_by = model.id
 
     def create(self, *args, **kwargs):
         """ Create a new entry """
@@ -46,7 +47,7 @@ class BaseService():
 
         return result  # created
 
-    def get_query(self, query, page=1, count=0, filters=None):
+    def get_query(self, query, page=1, count=0, since_id=0, order_by='desc', filters=None):
         """ Get all items from specified relation
 
         keyword arguments:
@@ -61,13 +62,21 @@ class BaseService():
         if not count or count > app.config['WIIM_COUNT_LIMIT']:
             count = app.config['WIIM_COUNT_LIMIT']
 
+        # only results with id greater than
+        if since_id:
+            query = query.filter(self.Model.id > since_id)
+
+        # set default order
+        order = self.order_by.desc() if order_by == 'desc' else self.order_by.asc()
+
         # apply filters or not
         if filters is not None:
             # for attr, value in filters.iteritems():
             #     query = query.filter(getattr(self.Model, attr) == value)
             query = query.filter_by(**filters)  # smart filter by kwargs
 
-        items = query.paginate(page, count).items
+        # do query
+        items = query.order_by(order).limit(count).all()
         result = items_schema.dump(items).data
 
         return result
@@ -177,6 +186,8 @@ class RecordService(BaseService):
     def __init__(self, *args, **kwargs):
         super(RecordService, self).__init__(*args, **kwargs)
 
+        self.order_by = Record.time_opc  # orverride order by column
+
     def create(self, *args, **kwargs):
         """ Create a new entry """
         # checks if tag id exits
@@ -186,7 +197,7 @@ class RecordService(BaseService):
         # continue with default method
         return super(RecordService, self).create(*args, **kwargs)
 
-    def get_by_process(self, process_id, page=1, count=0, filters=None):
+    def get_by_process(self, process_id, *args, **kwargs):
         """ Get all tags from specified process
 
         keyword arguments:
@@ -201,9 +212,9 @@ class RecordService(BaseService):
         # query records with previous tags
         query = Record.query.filter(Record.tag_id == t.c.id)
 
-        return self.get_query(query, page, count, filters)
+        return self.get_query(query, *args, **kwargs)
 
-    def get_by_tags(self, tags, page=1, count=0, filters=None):
+    def get_by_tags(self, tags, *args, **kwargs):
         """ Get all records from a tags list
 
         keyword arguments:
@@ -216,7 +227,7 @@ class RecordService(BaseService):
         # get records with tags id
         query = Record.query.filter(Record.tag_id.in_(tags))
 
-        return self.get_query(query, page, count, filters)
+        return self.get_query(query, *args, **kwargs)
 
 
 # Initialize services
