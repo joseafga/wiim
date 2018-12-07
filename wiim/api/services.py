@@ -46,12 +46,11 @@ class BaseService():
 
         return result  # created
 
-    def get_query(self, query, page=1, count=0, since_id=0, order_by='desc', filters=None):
+    def get_query(self, query, count=0, since_id=0, order_by='desc', filters=None):
         """ Get all items from specified relation
 
         keyword arguments:
         query -- SQLAlchemy query object
-        page -- page number (default 1)
         count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
         filters -- filters for sqlalchemy (default None)
         """
@@ -80,7 +79,7 @@ class BaseService():
 
         return result
 
-    def get_all(self, page=1, count=0, filters=None):
+    def get_all(self, *args, **kwargs):
         """ Get all items from specified relation
 
         keyword arguments:
@@ -90,7 +89,7 @@ class BaseService():
         """
         query = self.Model.query
 
-        return self.get_query(query, page, count, filters)
+        return self.get_query(query, *args, **kwargs)
 
     def get_by_id(self, id):
         """ Get single item by id
@@ -165,18 +164,17 @@ class TagService(BaseService):
 
         return result  # created
 
-    def get_by_process(self, process_id, page=1, count=0, filters=None):
+    def get_by_process(self, process_id, *args, **kwargs):
         """ Get all tags from specified process
 
         keyword arguments:
         process_id -- process id (required)
-        page -- page number (default 1)
         count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
         filters -- filters for sqlalchemy (default None)
         """
         query = Tag.query.filter(Tag.processes.any(Process.id == process_id))
 
-        return self.get_query(query, page, count, filters)
+        return self.get_query(query, *args, **kwargs)
 
 
 class RecordService(BaseService):

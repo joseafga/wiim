@@ -29,11 +29,12 @@ api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 @cache.cached()
 def get_sites():
     """ Get all Sites """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
-    return jsonify(site_service.get_all(page, count))
+    return jsonify(site_service.get_all(count, since_id=since, order_by=order))
 
 
 @api_bp.route('/zones', methods=['GET'])
@@ -41,15 +42,21 @@ def get_sites():
 @cache.cached()
 def get_zones(id=None):
     """ Get all Zones """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
     if id is None:
-        return jsonify(zone_service.get_all(page, count))
+        return jsonify(zone_service.get_all(count, since_id=since, order_by=order))
 
     # get only zones from specified site
-    return jsonify(zone_service.get_all(page, count, filters={'site_id': id}))
+    return jsonify(zone_service.get_all(
+        count,
+        since_id=since,
+        order_by=order,
+        filters={'site_id': id}
+    ))
 
 
 @api_bp.route('/processes', methods=['GET'])
@@ -57,26 +64,33 @@ def get_zones(id=None):
 @cache.cached()
 def get_processes(id=None):
     """ Get all Processes """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
     if id is None:
-        return jsonify(process_service.get_all(page, count))
+        return jsonify(process_service.get_all(count, since_id=since, order_by=order))
 
     # get only processes from specified zone
-    return jsonify(process_service.get_all(page, count, filters={'zone_id': id}))
+    return jsonify(process_service.get_all(
+        count,
+        since_id=since,
+        order_by=order,
+        filters={'zone_id': id}
+    ))
 
 
 @api_bp.route('/servers', methods=['GET'])
 @cache.cached()
 def get_servers():
     """ Get all Servers """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
-    return jsonify(server_service.get_all(page, count))
+    return jsonify(server_service.get_all(count, since_id=since, order_by=order))
 
 
 @api_bp.route('/tags', methods=['GET'])
@@ -84,27 +98,34 @@ def get_servers():
 @cache.cached()
 def get_tags(id=None):
     """ Get all Tags """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
     if id is None:
-        return jsonify(tag_service.get_all(page, count))
+        return jsonify(tag_service.get_all(count, since_id=since, order_by=order))
 
     # get only tags from specified server
-    return jsonify(tag_service.get_all(page, count, filters={'server_id': id}))
+    return jsonify(tag_service.get_all(
+        count,
+        since_id=since,
+        order_by=order,
+        filters={'server_id': id}
+    ))
 
 
 @api_bp.route('/processes/<int:id>/tags', methods=['GET'])
 @cache.cached()
 def get_process_tags(id):
     """ Get all tags from process """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
     # get only tags from specified process
-    return jsonify(tag_service.get_by_process(id, page, count))
+    return jsonify(tag_service.get_by_process(id, count, since_id=since, order_by=order))
 
 
 @api_bp.route('/records', methods=['GET'])
@@ -112,35 +133,40 @@ def get_process_tags(id):
 @cache.cached()
 def get_records(id=None):
     """ Return all Records """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
 
     if id is None:
         tags = request.args.getlist('tags')
 
         if tags:
             # get tags with id in list
-            return jsonify(record_service.get_by_tags(tags, page, count))
+            return jsonify(record_service.get_by_tags(tags, count, since_id=since, order_by=order))
 
         # get all tags
-        return jsonify(record_service.get_all(page, count))
+        return jsonify(record_service.get_all(count, since_id=since, order_by=order))
 
     # get only records from specified tag
-    return jsonify(record_service.get_all(page, count, filters={'tag_id': id}))
+    return jsonify(record_service.get_all(
+        count,
+        since_id=since,
+        order_by=order,
+        filters={'tag_id': id}
+    ))
 
 
 @api_bp.route('/processes/<int:id>/records', methods=['GET'])
 def get_process_records(id=None):
     """ Return all Records from Process """
-    # pagination page and number of results displayed
-    page = int(request.args.get('page', 1))
+    # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
     order = request.args.get('order')
 
     # get only records from specified tag
-    return jsonify(record_service.get_by_process(id, page, count, since_id=since, order_by=order))
+    return jsonify(record_service.get_by_process(id, count, since_id=since, order_by=order))
 
 
 # ----> GET SINGLE <-----
