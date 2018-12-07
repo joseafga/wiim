@@ -130,7 +130,6 @@ def get_process_tags(id):
 
 @api_bp.route('/records', methods=['GET'])
 @api_bp.route('/tags/<int:id>/records', methods=['GET'])
-@cache.cached()
 def get_records(id=None):
     """ Return all Records """
     # get params from que url query
@@ -143,7 +142,12 @@ def get_records(id=None):
 
         if tags:
             # get tags with id in list
-            return jsonify(record_service.get_by_tags(tags, count, since_id=since, order_by=order))
+            return jsonify(record_service.get_by_tags(
+                tags,
+                count,
+                since_id=since,
+                order_by=order
+            ))
 
         # get all tags
         return jsonify(record_service.get_all(count, since_id=since, order_by=order))
