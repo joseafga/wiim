@@ -156,13 +156,33 @@ class BaseService():
 
 
 class TagService(BaseService):
-    """ Tags methods with Base Service """
+    """ Tags methods with Base Service
+
+    Args:
+        model (class): Tag model class
+        schema (class): Tag marshmallow schema class
+
+    Attributes:
+        model (class): Tag model class
+        schema (class): Tag marshmallow schema class
+        order_by (str): model column to order
+    """
 
     def __init__(self, *args, **kwargs):
         super(TagService, self).__init__(*args, **kwargs)
 
-    def create(self, *args, **kwargs):
-        """ Create a new Model """
+    def create(self, **kwargs):
+        """ Create a new tag entry
+
+        Args:
+            **kwargs: model attributes
+
+        Returns:
+            A dict with the tag that was created
+
+        Raises:
+            Exception: If have invalid or missing attributes
+        """
         # get processes field
         if 'processes' in kwargs:
             procs = kwargs['processes']
@@ -200,10 +220,17 @@ class TagService(BaseService):
     def get_by_process(self, process_id, *args, **kwargs):
         """ Get all tags from specified process
 
-        keyword arguments:
-        process_id -- process id (required)
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        filters -- filters for sqlalchemy (default None)
+        Args:
+            process_id (int): related process id
+
+        Kwargs:
+            count (int): query limit, use zero for WIIM_COUNT_LIMIT
+            since_id (int, optional): only results with id greater than
+            order_by (str): order ascending (asc) or descending (desc)
+            filters (dict, optional): filters for sqlalchemy query
+
+        Returns:
+            A list with table rows data mapped, every row is a dict
         """
         query = Tag.query.filter(Tag.processes.any(Process.id == process_id))
 
@@ -218,23 +245,39 @@ class RecordService(BaseService):
 
         self.order_by = Record.time_opc  # orverride order by column
 
-    def create(self, *args, **kwargs):
-        """ Create a new entry """
+    def create(self, **kwargs):
+        """ Create a new record entry
+
+        Args:
+            **kwargs: model attributes
+
+        Returns:
+            A dict with the record that was created
+
+        Raises:
+            Exception: If have invalid or missing attributes
+        """
         # checks if tag id exits
         if db.session.query(Tag.id).filter_by(id=kwargs['tag_id']).scalar() is None:
             raise Exception("Have no Tag with id equal " + str(kwargs['tag_id']))
 
         # continue with default method
-        return super(RecordService, self).create(*args, **kwargs)
+        return super(RecordService, self).create(**kwargs)
 
     def get_by_process(self, process_id, *args, **kwargs):
         """ Get all tags from specified process
 
-        keyword arguments:
-        process_id -- related process id (required)
-        page -- page number (default 1)
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        filters -- filters for sqlalchemy (default None)
+        Args:
+            process_id (int): related process id
+
+        Kwargs:
+            count (int): query limit, use zero for WIIM_COUNT_LIMIT
+            since_id (int, optional): only results with id greater than
+            order_by (str): order ascending (asc) or descending (desc)
+            filters (dict, optional): filters for sqlalchemy query
+
+        Returns:
+            A list with table rows data mapped, every row is a dict
         """
 
         # get tags by process id
@@ -247,11 +290,17 @@ class RecordService(BaseService):
     def get_by_tags(self, tags, *args, **kwargs):
         """ Get all records from a tags list
 
-        keyword arguments:
-        tags -- list with tags id (required)
-        page -- page number (default 1)
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        filters -- filters for sqlalchemy (default None)
+        Args:
+            tags (list of int): list or tuple with related tags id
+
+        Kwargs:
+            count (int): query limit, use zero for WIIM_COUNT_LIMIT
+            since_id (int, optional): only results with id greater than
+            order_by (str): order ascending (asc) or descending (desc)
+            filters (dict, optional): filters for sqlalchemy query
+
+        Returns:
+            A list with table rows data mapped, every row is a dict
         """
 
         # get records with tags id
