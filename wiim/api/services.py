@@ -170,40 +170,6 @@ class TagService(BaseService):
 
         return self.get_query(query, page, count, filters)
 
-    def since(self):
-        session = db.session
-        # time = datetime.datetime(2018, 11, 14, 21, 52, 29)
-        last_id = 80
-
-        tags_records_schema = TagRecordsSchema(many=True)
-        # query = Tag.query
-        # query = Record.query.filter(Record.tag_id == 45, Record.id > last_id)
-        query = session.query(Tag, Record).filter(Tag.id == Record.tag_id)
-        # query = session.query(Tag).join(Record).filter(Tag.id == Record.tag_id, Record.id > last_id)
-        # tag_records = Tag.query.all()
-        items = query.order_by(Record.time_db.asc()).limit(20).all()
-
-        print(items)
-        # for item in items:
-        #     print(item.records)
-
-        tags = []
-        for x, y in items:
-            x.records = []
-            x.records.append(y)
-            tags.append(x)
-
-        items = tags
-
-        items = tags_records_schema.dump(items).data
-        # data = tags_records_schema.dump(tag_records).data
-        # print(tag_records)
-        # result = tags_records_schema.dump(tag_records).data
-
-        return items
-
-        # return item
-
 
 class RecordService(BaseService):
     """ Record methods with Base Service """
