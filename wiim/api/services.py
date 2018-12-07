@@ -220,6 +220,23 @@ class RecordService(BaseService):
         # continue with default method
         return super(RecordService, self).create(*args, **kwargs)
 
+    def get_by_process(self, process_id, page=1, count=0, filters=None):
+        """ Get all tags from specified process
+
+        keyword arguments:
+        process_id -- related process id (required)
+        page -- page number (default 1)
+        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
+        filters -- filters for sqlalchemy (default None)
+        """
+
+        # get tags by process id
+        t = Tag.query.filter(Tag.processes.any(Process.id == process_id)).subquery('t')
+        # query records with previous tags
+        query = Record.query.filter(Record.tag_id == t.c.id)
+
+        return self.get_query(query, page, count, filters)
+
     def get_by_tags(self, tags, page=1, count=0, filters=None):
         """ Get all records from a tags list
 
