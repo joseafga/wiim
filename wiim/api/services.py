@@ -15,9 +15,14 @@ from .models import *
 class BaseService():
     """ Base service class
 
-    keyword arguments:
-    model -- model class (required)
-    schema -- marshmallow schema class (required)
+    Args:
+        model (class): model class
+        schema (class): marshmallow schema class
+
+    Attributes:
+        model (class): model class
+        schema (class): marshmallow schema class
+        order_by (str): model column to order
     """
 
     def __init__(self, model, schema):
@@ -25,8 +30,15 @@ class BaseService():
         self.Schema = schema
         self.order_by = model.id
 
-    def create(self, *args, **kwargs):
-        """ Create a new entry """
+    def create(self, **kwargs):
+        """ Create a new entry
+
+        Args:
+            **kwargs: model attributes
+
+        Returns:
+            A dict with the entry that was created
+        """
         item_schema = self.Schema()
 
         # checks required fields
@@ -49,10 +61,17 @@ class BaseService():
     def get_query(self, query, count=0, since_id=0, order_by='desc', filters=None):
         """ Get all items from specified relation
 
-        keyword arguments:
-        query -- SQLAlchemy query object
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        filters -- filters for sqlalchemy (default None)
+        Args:
+            query (sqlalchemy.orm.query): SQLAlchemy query object
+
+        Kwargs:
+            count (int): query limit, use zero for WIIM_COUNT_LIMIT
+            since_id (int, optional): only results with id greater than
+            order_by (str): order ascending (asc) or descending (desc)
+            filters (dict, optional): filters for sqlalchemy query
+
+        Returns:
+            A list with table rows data mapped, every row is a dict
         """
         items_schema = self.Schema(many=True)
 
@@ -82,10 +101,14 @@ class BaseService():
     def get_all(self, *args, **kwargs):
         """ Get all items from specified relation
 
-        keyword arguments:
-        page -- page number (default 1)
-        count -- tags per page, use zero for WIIM_COUNT_LIMIT (default 0)
-        filters -- filters for sqlalchemy (default None)
+        Kwargs:
+            count (int): query limit, use zero for WIIM_COUNT_LIMIT
+            since_id (int, optional): only results with id greater than
+            order_by (str): order ascending (asc) or descending (desc)
+            filters (dict, optional): filters for sqlalchemy query
+
+        Returns:
+            A list with table rows data mapped, every row is a dict
         """
         query = self.Model.query
 
@@ -94,8 +117,11 @@ class BaseService():
     def get_by_id(self, id):
         """ Get single item by id
 
-        keyword arguments:
-        id -- Item id (required)
+        Args:
+            id (int): Item id to query
+
+        Returns:
+            A dict with table row data mapped
         """
         item_schema = self.Schema()
 
@@ -105,13 +131,20 @@ class BaseService():
         return result
 
     def update():
+        """ Update existing entry
+
+        TODO
+        """
         pass
 
     def destroy_by_id(self, id):
         """ Remove a entry by id
 
         keyword arguments:
-        id -- Item id (required)
+            id (int): Item id to remove
+
+        Returns:
+            True if it was a success
         """
         item = self.Model.query.get(id)
 
