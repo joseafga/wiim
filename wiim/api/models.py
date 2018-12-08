@@ -193,7 +193,7 @@ class RecordSchema(ma.ModelSchema):
 
     class Meta:
         # Fields to expose
-        # fields = ('time_opc', 'time_db', 'value', 'quality', 'tag')
+        # fields = ('id', 'time_opc', 'time_db', 'value', 'quality')
         model = Record
 
     # tag = fields.Nested(TagSchema)
