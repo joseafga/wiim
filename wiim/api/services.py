@@ -60,7 +60,7 @@ class BaseService():
 
         return result  # created
 
-    def get_query(self, query, count=0, since_id=0, order_by='desc', filters=None):
+    def get_query(self, query, count=0, since_id=0, order_by=None, filters=None):
         """ Get all items from specified relation
 
         Args:
@@ -85,8 +85,13 @@ class BaseService():
         if since_id:
             query = query.filter(self.Model.id > since_id)
 
-        # set default order
-        order = self.order_by.desc() if order_by == 'desc' else self.order_by.asc()
+        # set order
+        if order_by == 'desc':
+            order = self.order_by.desc()
+        elif order_by == 'asc':
+            order = self.order_by.asc()
+        else:
+            order = None
 
         # apply filters or not
         if filters is not None:
@@ -352,9 +357,13 @@ class TimelineService():
         if since_id:
             query = query.filter(Record.id > since_id)
 
-        # set default order
-        # order = self.order_by.desc() if order_by == 'desc' else self.order_by.asc()
-        order = Record.id.desc()
+        # set order
+        if order_by == 'desc':
+            order = self.order_by.desc()
+        elif order_by == 'asc':
+            order = self.order_by.asc()
+        else:
+            order = None
 
         # apply filters or not
         if filters is not None:
