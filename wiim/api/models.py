@@ -123,7 +123,7 @@ class Record(db.Model):
 # ----> SCHEMAS <-----
 
 class SiteSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Site """
+    """ (De)Serializing Schema for Site """
 
     class Meta:
         # Fields to expose
@@ -132,7 +132,7 @@ class SiteSchema(ma.ModelSchema):
 
 
 class ZoneSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Zone """
+    """ (De)Serializing Schema for Zone """
 
     class Meta:
         # Fields to expose
@@ -143,7 +143,7 @@ class ZoneSchema(ma.ModelSchema):
 
 
 class ProcessSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Process """
+    """ (De)Serializing Schema for Process """
 
     class Meta:
         # Fields to expose
@@ -155,7 +155,7 @@ class ProcessSchema(ma.ModelSchema):
 
 
 class ServerSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Server """
+    """ (De)Serializing Schema for Server """
 
     class Meta:
         # Fields to expose
@@ -170,7 +170,7 @@ class ServerSchema(ma.ModelSchema):
 
 
 class TagSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Tag """
+    """ (De)Serializing Schema for Tag """
     exclude = ['processes', 'records']
 
     class Meta:
@@ -188,7 +188,7 @@ class TagSchema(ma.ModelSchema):
 
 
 class RecordSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Record """
+    """ (De)Serializing Schema for Record """
     time_db = fields.DateTime(required=False)  # force unrequired
 
     class Meta:
@@ -204,13 +204,8 @@ class RecordSchema(ma.ModelSchema):
     # })
 
 
-class TagRecordsSchema(ma.ModelSchema):
-    """ (Des)Serializing Schema for Tag """
+class TimelineSchema(ma.ModelSchema):
+    """ Deserializing Schema for Timeline (Tag, Record) """
 
-    class Meta:
-        # Fields to expose
-        # fields = ('name', 'alias', 'comment', 'unit', 'icon', 'server')
-        model = Tag
-
-    records = fields.Nested(RecordSchema, many=True)
-    # tags = fields.Nested(TagSchema)
+    tag = fields.Nested(TagSchema)
+    record = fields.Nested(RecordSchema)

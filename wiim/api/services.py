@@ -8,6 +8,8 @@ Include Models management for API
 """
 
 from flask import current_app as app
+from flask_sqlalchemy import get_debug_queries
+from sqlalchemy import func, and_
 # application imports
 from .models import *
 
@@ -88,8 +90,6 @@ class BaseService():
 
         # apply filters or not
         if filters is not None:
-            # for attr, value in filters.iteritems():
-            #     query = query.filter(getattr(self.Model, attr) == value)
             query = query.filter_by(**filters)  # smart filter by kwargs
 
         # do query
@@ -282,7 +282,7 @@ class RecordService(BaseService):
 
         # get tags by process id
         t = Tag.query.filter(Tag.processes.any(Process.id == process_id)).subquery('t')
-        # query records with previous tags
+        # query records grouping by tag id with previous tags
         query = Record.query.filter(Record.tag_id == t.c.id)
 
         return self.get_query(query, *args, **kwargs)
@@ -309,6 +309,66 @@ class RecordService(BaseService):
         return self.get_query(query, *args, **kwargs)
 
 
+class TimelineService():
+    """ Timeline methods to accelerate queries """
+
+    def __init__(self, *args, **kwargs):
+        self.order_by = Tag.id
+
+    def timeline(self, process_id, count=0, since_id=0, order_by='desc', filters=None):
+        """ Get all tags and last records from specified process
+
+        Args:
+            process_id (int): related process id
+
+        Kwargs:
+            count (int): query limit, use zero for WIIM_COUNT_LIMIT
+            since_id (int, optional): only results with id greater than
+            order_by (str): order ascending (asc) or descending (desc)
+            filters (dict, optional): filters for sqlalchemy query
+
+        Returns:
+            A list with tuple of tag and record tables rows data mapped
+        """
+
+        # get the last record id from tags
+        r2 = db.session.query(
+            func.max(Record.id).label('max_id')
+        ).group_by(Record.tag_id).subquery('r2')
+
+        # select from tag and record table and combine it
+        query = db.session.query(Record, Tag).\
+            join(r2, r2.c.max_id == Record.id).\
+            filter(Tag.id == Record.tag_id).\
+            filter(Tag.processes.any(Process.id == process_id))
+
+        timeline_schema = TimelineSchema(many=True)
+
+        # limit fetch quantity
+        if not count or count > app.config['WIIM_COUNT_LIMIT']:
+            count = app.config['WIIM_COUNT_LIMIT']
+
+        # only results with id greater than
+        if since_id:
+            query = query.filter(Record.id > since_id)
+
+        # set default order
+        # order = self.order_by.desc() if order_by == 'desc' else self.order_by.asc()
+        order = Record.id.desc()
+
+        # apply filters or not
+        if filters is not None:
+            query = query.filter_by(**filters)  # smart filter by kwargs
+
+        items = query.order_by(order).limit(count).all()  # do query
+
+        # convert (tag, record) to dict and add label
+        items = [{'tag': t, 'record': r} for r, t in items]
+        result = timeline_schema.dump(items).data
+
+        return result
+
+
 # Initialize services
 site_service = BaseService(Site, SiteSchema)
 zone_service = BaseService(Zone, ZoneSchema)
@@ -316,3 +376,4 @@ process_service = BaseService(Process, ProcessSchema)
 server_service = BaseService(Server, ServerSchema)
 tag_service = TagService(Tag, TagSchema)
 record_service = RecordService(Record, RecordSchema)
+timeline_service = TimelineService()

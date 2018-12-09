@@ -13,8 +13,8 @@ from werkzeug.exceptions import HTTPException
 # application imports
 from wiim import qrcode
 # from .services import Record, Tag, Server, Process, Zone, Site
-from .services import record_service, tag_service, server_service, \
-    process_service, zone_service, site_service
+from .services import record_service, tag_service, server_service,\
+    process_service, zone_service, site_service, timeline_service
 
 # Cache requests
 cache = Cache()
@@ -171,6 +171,18 @@ def get_process_records(id=None):
 
     # get only records from specified tag
     return jsonify(record_service.get_by_process(id, count, since_id=since, order_by=order))
+
+
+@api_bp.route('/processes/<int:id>/timeline', methods=['GET'])
+def get_process_timeline(id=None):
+    """ Return all Records from Process """
+    # get params from que url query
+    count = int(request.args.get('count', 0))
+    since = int(request.args.get('since', 0))
+    order = request.args.get('order')
+
+    # get only records from specified tag
+    return jsonify(timeline_service.timeline(id, count, since_id=since, order_by=order))
 
 
 # ----> GET SINGLE <-----
