@@ -320,7 +320,7 @@ class TimelineService():
     def __init__(self, *args, **kwargs):
         self.order_by = Tag.id
 
-    def timeline(self, process_id, count=0, since_id=0, order_by='desc', filters=None):
+    def timeline(self, process_id, count=0, since_id=0, order_by=None, filters=None):
         """ Get all tags and last records from specified process
 
         Args:

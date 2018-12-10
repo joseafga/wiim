@@ -32,7 +32,7 @@ def get_sites():
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     return jsonify(site_service.get_all(count, since_id=since, order_by=order))
 
@@ -45,7 +45,7 @@ def get_zones(id=None):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     if id is None:
         return jsonify(zone_service.get_all(count, since_id=since, order_by=order))
@@ -67,7 +67,7 @@ def get_processes(id=None):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     if id is None:
         return jsonify(process_service.get_all(count, since_id=since, order_by=order))
@@ -88,7 +88,7 @@ def get_servers():
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     return jsonify(server_service.get_all(count, since_id=since, order_by=order))
 
@@ -101,7 +101,7 @@ def get_tags(id=None):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     if id is None:
         return jsonify(tag_service.get_all(count, since_id=since, order_by=order))
@@ -122,7 +122,7 @@ def get_process_tags(id):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     # get only tags from specified process
     return jsonify(tag_service.get_by_process(id, count, since_id=since, order_by=order))
@@ -135,7 +135,7 @@ def get_records(id=None):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     if id is None:
         tags = request.args.getlist('tags')
@@ -167,7 +167,7 @@ def get_process_records(id=None):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     # get only records from specified tag
     return jsonify(record_service.get_by_process(id, count, since_id=since, order_by=order))
@@ -179,7 +179,7 @@ def get_process_timeline(id=None):
     # get params from que url query
     count = int(request.args.get('count', 0))
     since = int(request.args.get('since', 0))
-    order = request.args.get('order')
+    order = request.args.get('order', None)
 
     # get only records from specified tag
     return jsonify(timeline_service.timeline(id, count, since_id=since, order_by=order))
