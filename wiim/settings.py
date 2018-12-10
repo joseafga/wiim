@@ -44,8 +44,6 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://wiim:wiimpass@localhost/wiim_dev'
     # Caching times in seconds
     CACHE_DEFAULT_TIMEOUT = 5
-    # SQLAlchemy options
-    SQLALCHEMY_ECHO = True
 
 
 class TestingConfig(Config):

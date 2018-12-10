@@ -375,6 +375,10 @@ class TimelineService():
         items = [{'tag': t, 'record': r} for r, t in items]
         result = timeline_schema.dump(items).data
 
+        # Debug output data
+        if app.config['DEBUG']:
+            app.logger.info(result)
+
         return result
 
 
