@@ -4,7 +4,7 @@ Wiim Industrial Information Management
 
 Undergraduate Final Project
 ------
-Desktop server application.
+Wiim server application.
 
 Requires
 ------

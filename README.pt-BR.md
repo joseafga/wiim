@@ -4,7 +4,7 @@ Wiim Industrial Information Management
 
 Trabalho de Conclusão de Curso
 ------
-Aplicativo para desktop do servidor.
+Aplicativo de servidor do Wiim.
 
 Requerido
 ------
