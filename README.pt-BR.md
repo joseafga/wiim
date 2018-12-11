@@ -1,22 +1,35 @@
-# Wiim Industrial Information Management
+Wiim Industrial Information Management
+======
 *Read this in other languages: [English](README.md), [Português (BR)](README.pt-BR.md).*
 
-### Trabalho de Conclusão de Curso
+Trabalho de Conclusão de Curso
+------
 Aplicativo para desktop do servidor.
 
-### Requerido:
+Requerido
+------
 * pip install pyqt5
 * pip install opcua (*cryptography, dateutil, lxml and pytz)
 * pip install opcua-widgets
 * pip install cryptography
-    - RESTful
 * pip install flask
-* pip install flask-jsonpify flask-sqlalchemy flask-caching flask-restful
-* pip install pymysql
+* pip install flask-sqlalchemy flask-caching flask-migrate flask-script
 * pip install flask-marshmallow marshmallow-sqlalchemy
-    - QRCode
+* pip install pymysql
 * pip install qrcode
-* pip install Pillow (PIL dead?)
+* pip install Pillow
 
-## Licença
+Uso
+------
+Para instalar ou atualizar o banco de dados:
+```
+python manage.py db upgrade
+```
+Para iniciar o servidor:
+```
+python manage.py run
+```
+
+Licença
+------
 `CC BY-NC 4.0` – [Atribuição-NãoComercial 4.0 Internacional](https://creativecommons.org/licenses/by-nc/4.0/deed.pt_BR)
