@@ -17,7 +17,7 @@ logo = Image.open(os.path.join(dirname, 'static/icons/96/wiim_boxborder.png'))
 logo = logo.convert("RGBA")
 
 
-def generate(type, id):
+def generate(data):
     # QRCode options
     qr = qrcode.QRCode(
         version=4,
@@ -27,7 +27,7 @@ def generate(type, id):
     )
 
     # set content
-    qr.add_data(type + ':' + str(id))
+    qr.add_data(data)
     qr.make(fit=True)
 
     # create QRCode image

@@ -323,7 +323,7 @@ def destroy_record(id):
 @cache.cached(timeout=3600)  # cache for 1 hour
 def get_process_qrcode(id):
     """ Get QRCode image for Tag """
-    img = qrcode.generate('process', id)
+    img = qrcode.generate('process:' + str(id))
 
     return send_file(img, mimetype='image/png')
 
@@ -332,7 +332,7 @@ def get_process_qrcode(id):
 @cache.cached(timeout=3600)  # cache for 1 hour
 def get_tag_qrcode(id):
     """ Get QRCode image for Tag """
-    img = qrcode.generate('tag', id)
+    img = qrcode.generate('tag:' + str(id))
 
     return send_file(img, mimetype='image/png')
 
