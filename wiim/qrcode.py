@@ -3,8 +3,8 @@ wiim.qrcode
 
 Generate QRCode
 
-:copyright: © 2018 by José Almeida.
-:license: CC BY-NC 4.0, see LICENSE for more details.
+:copyright: © 2018 by José Almeida
+:license: AGPLv3/Commercial, see LICENSE file for more details
 """
 
 import os

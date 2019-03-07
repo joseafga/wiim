@@ -4,8 +4,8 @@ wiim.api.models
 Models classes and schemas for API
 using collation utf8mb4_unicode_ci
 
-:copyright: © 2018 by José Almeida.
-:license: CC BY-NC 4.0, see LICENSE for more details.
+:copyright: © 2018 by José Almeida
+:license: AGPLv3/Commercial, see LICENSE file for more details
 """
 
 from flask import request

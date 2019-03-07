@@ -3,8 +3,8 @@ wiim.api.controller
 
 Include routes management for API
 
-:copyright: © 2018 by José Almeida.
-:license: CC BY-NC 4.0, see LICENSE for more details.
+:copyright: © 2018 by José Almeida
+:license: AGPLv3/Commercial, see LICENSE file for more details
 """
 
 from flask import Blueprint, make_response, request, send_file, jsonify
